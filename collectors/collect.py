@@ -71,6 +71,32 @@ def parse_bank(html: str, bank: str, retrieved_at: str) -> list[dict]:
         })
     return result[:9]
 
+
+def rba_official_cash_rate(session: requests.Session) -> float:
+    """Aktuellen RBA-Cash-Rate-Target bei der Zentralbank verifizieren."""
+    response = session.get("https://www.rba.gov.au/", timeout=25)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    text = re.sub(r"\\s+", " ", " ".join(soup.stripped_strings))
+    m = re.search(r"Cash rate target\\s+(\\d+(?:\\.\\d+)?)\\s*%", text, re.I)
+    if not m:
+        raise ValueError("Offiziellen RBA-Leitzins nicht verifizierbar")
+    return float(m.group(1))
+
+def validate_rba_rows(rows: list[dict], session: requests.Session) -> None:
+    """RBA-Daten bei Widerspruch zum aktuellen amtlichen Satz zurückhalten."""
+    if not rows:
+        raise ValueError("RBA: keine gültigen Meeting-Daten")
+    official = rba_official_cash_rate(session)
+    first = rows[0]
+    inferred = first["implied_rate_pct"] - first["incremental_expected_bps"] / 100
+    # In unterschiedlichen Modellen können kleine Rundungsdifferenzen auftreten.
+    if abs(inferred - official) > 0.055:
+        raise ValueError(
+            f"RBA Quellbasis {inferred:.3f}% weicht vom offiziellen Satz "
+            f"{official:.3f}% ab; Daten zurückgehalten"
+        )
+
 def signature(rows: list[dict]) -> str:
     """Zeitstempel nicht in den Inhaltsvergleich einbeziehen."""
     content = [{k: v for k, v in row.items() if k != "retrieved_at"} for row in rows]
@@ -94,11 +120,13 @@ def main() -> int:
             rows = parse_bank(response.text, bank, timestamp)
             if len(rows) < 1:
                 raise ValueError(f"Keine gültigen Meetings gefunden")
+            if bank == "RBA":
+                validate_rba_rows(rows, session)
             updates[bank] = rows
         except Exception as exc:
             errors[bank] = str(exc)[:250]
     if len(updates) < 4:
-        print("Abbruch: keine Bank mit mindestens zwei validierten Meetings.", errors, file=sys.stderr)
+        print("Abbruch: weniger als vier Zentralbanken mit validen Daten.", errors, file=sys.stderr)
         return 2
     old_by_bank = {bank: [r for r in previous.get("records", []) if r["bank"] == bank] for bank in BANKS}
     merged = []
@@ -113,6 +141,7 @@ def main() -> int:
             history.extend(new_rows)
             changes += 1
     latest = {
+        "stale_banks": [bank for bank in BANKS if bank in errors and old_by_bank[bank]],
         "retrieved_at": timestamp, "records": sorted(merged, key=lambda x: (x["bank"], x["meeting_date"])),
         "errors": errors, "status": "partial" if errors else "ok",
         "timestamp_note": "retrieved_at ist nur der Abrufzeitpunkt, nicht der nachgewiesene Marktdatenzeitpunkt."
