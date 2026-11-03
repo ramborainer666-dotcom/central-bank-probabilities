@@ -117,7 +117,8 @@ def main() -> int:
         "errors": errors, "status": "partial" if errors else "ok",
         "timestamp_note": "retrieved_at ist nur der Abrufzeitpunkt, nicht der nachgewiesene Marktdatenzeitpunkt."
     }
-    latest_path.write_text(json.dumps(latest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    if changes or errors != previous.get("errors", {}) or not previous.get("records"):
+        latest_path.write_text(json.dumps(latest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     if changes:
         history_path.write_text(json.dumps(history, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Banken mit Daten: {len(updates)}; inhaltlich veränderte Banken: {changes}; Fehler: {errors}")
