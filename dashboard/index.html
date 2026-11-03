@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Central Bank Probability Monitor</title>
+<style>
+:root{color-scheme:dark;--bg:#080d15;--panel:#0e1622;--edge:#233248;--muted:#91a2b9;--txt:#e6eff9;--hike:#24b47e;--hold:#a0aec0;--cut:#f07172}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);font:14px system-ui,-apple-system,Segoe UI,sans-serif;margin:0}
+header{padding:24px max(20px,calc((100vw - 1450px)/2));border-bottom:1px solid var(--edge)}h1{margin:0;font-size:25px;letter-spacing:.3px}h2{font-size:16px;margin:0 0 15px}p{color:var(--muted);line-height:1.6}small{color:var(--muted)}main{max-width:1450px;margin:auto;padding:22px 20px 60px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.panel,.bank{border:1px solid var(--edge);border-radius:14px;background:var(--panel);padding:18px}
+.bank{cursor:pointer;text-align:left;color:inherit;font:inherit;transition:border-color .16s}.bank:hover,.bank.active{border-color:var(--bank)}.bank header{display:flex;align-items:center;gap:9px;border:0;padding:0}.bank .dot{width:9px;height:24px;background:var(--bank);border-radius:4px}.bank strong{font-size:17px}.bank .small{color:var(--muted);font-size:11px;margin-top:9px}
+.bar{height:8px;border-radius:6px;display:flex;overflow:hidden;background:#263246;margin-top:12px}.bar i{display:block;height:100%}.stats{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-variant-numeric:tabular-nums;font-size:12px}
+.row{display:flex;gap:13px;flex-wrap:wrap;align-items:center;justify-content:space-between}.buttons{display:flex;gap:6px;flex-wrap:wrap}
+button.choice{background:#172335;border:1px solid var(--edge);color:var(--txt);border-radius:7px;padding:8px 12px;cursor:pointer}button.choice.selected{border-color:#5e8ec7;background:#203950}
+.panel{margin-top:16px}.muted{color:var(--muted)}.warn{color:#f0c875}.ok{color:#70cea4}.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}.legend span{display:flex;align-items:center;gap:5px;font-size:12px}.swatch{width:14px;height:4px;display:inline-block;border-radius:5px}
+canvas{max-width:100%;width:100%;height:330px;display:block}.twocol{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:11px 8px;text-align:left;border-bottom:1px solid #203047}th{color:var(--muted);font-weight:500}td.num{text-align:right;font-variant-numeric:tabular-nums}
+a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color:var(--muted);text-align:center}
+@media(max-width:960px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.twocol{grid-template-columns:1fr}}
+@media(max-width:540px){.grid{grid-template-columns:1fr}header{padding:20px}main{padding:14px}h1{font-size:20px}.panel{padding:12px}}
+</style></head>
+<body>
+<header><h1>Central Bank Probability Monitor</h1><div id="status" class="muted">Lade Daten…</div></header>
+<main>
+<div class="row"><h2>Acht Zentralbanken · nächstes und übernächstes Meeting</h2>
+<div class="buttons"><button class="choice selected" data-meeting="0">Meeting 1</button><button class="choice" data-meeting="1">Meeting 2</button></div></div>
+<div id="banks" class="grid"></div>
+<section class="panel"><div class="row"><h2>Implied Policy Rate Paths – relativ zur aktuellen Rate (bps)</h2>
+<div class="buttons"><button class="choice selected" data-path="all">Alle Meetings</button><button class="choice" data-path="two">Nur 2 Meetings</button></div></div>
+<div id="leader" class="muted"></div><canvas id="path" role="img" aria-label="Vergleich erwarteter Zinsänderungen aller acht Zentralbanken"></canvas>
+<div class="legend" id="legend"></div><p><small>Linien basieren auf impliziten Zinssätzen der Quelle. Die einzelnen Banken haben unterschiedliche Sitzungstermine. Der Vergleich am rechten Endpunkt ist daher kein kalendergleicher Vergleich; einzelne fehlende Punkte werden nicht extrapoliert.</small></p></section>
+<div class="twocol">
+<section class="panel"><div class="row"><h2 id="detailtitle">Wahrscheinlichkeiten</h2><div class="buttons"><button class="choice selected" data-mode="cumulative">Kumuliert</button><button class="choice" data-mode="incremental">Meeting isoliert</button></div></div>
+<div id="detail"></div></section>
+<section class="panel"><h2>Veränderung gegenüber dem letzten Snapshot</h2><div id="deltas"></div></section>
+</div>
+<section class="panel"><h2>Historische Hike-Wahrscheinlichkeit (kumuliert, für gleiches Meeting-Datum)</h2>
+<canvas id="historyChart" role="img" aria-label="Historische Wahrscheinlichkeiten"></canvas><p><small>Nur echte gespeicherte Änderungen. Die Zeitreihe bleibt an ein konkretes Meeting-Datum gebunden, auch wenn Sitzungen vorrücken.</small></p></section>
+<section class="panel"><h2>Transparenz der Datenquellen</h2><div id="sourceInfo" class="muted"></div></section>
+</main>
+<script>
+const BANKS=['FED','ECB','BOE','BOC','RBA','RBNZ','BOJ','SNB'];
+const COLORS={FED:'#FFC000',ECB:'#7030A0',BOE:'#FF0000',BOC:'#70AD47',RBA:'#ED7D31',RBNZ:'#9900CC',BOJ:'#FFFF00',SNB:'#00B0F0'};
+let latest={records:[],errors:{}},history=[],bank='FED',meeting=0,mode='cumulative',pathMode='all';
+const $=s=>document.querySelector(s),fmt=(x,n=1)=>typeof x==='number'?x.toFixed(n).replace('.',','):'k. A.',pct=x=>fmt(x)+' %',bp=x=>(typeof x==='number'?(x>=0?'+':'')+fmt(x)+' bp':'k. A.');
+const grp=(rows,b)=>rows.filter(r=>r.bank===b).sort((a,c)=>a.meeting_date.localeCompare(c.meeting_date));
+const selected=()=>grp(latest.records||[],bank)[meeting];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const date=s=>s?new Date(s+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'}):'–';
+function setActive(attr,value){document.querySelectorAll('[data-'+attr+']').forEach(b=>b.classList.toggle('selected',b.dataset[attr]===String(value)))}
+function renderCards(){
+ const box=$('#banks');box.innerHTML=BANKS.map(b=>{
+ const r=grp(latest.records||[],b)[meeting];const c=r?.cumulative,values=c?[c.higher,c.same,c.lower]:[0,0,0];
+ return '<button class="bank '+(bank===b?'active':'')+'" style="--bank:'+COLORS[b]+'" data-bank="'+b+'"><header><span class="dot"></span><strong>'+b+'</strong><small>'+date(r?.meeting_date)+'</small></header>'+
+ (r?'<div class="bar">'+values.map((v,i)=>'<i style="width:'+Math.max(0,v)+'%;background:'+['var(--hike)','var(--hold)','var(--cut)'][i]+'"></i>').join('')+'</div><div class="stats"><span>Hike '+pct(c.higher)+'</span><span>Hold '+pct(c.same)+'</span><span>Cut '+pct(c.lower)+'</span></div><div class="small">Δ Zinspfad: '+bp(r.incremental_expected_bps)+'</div>':'<div class="empty">Keine validierten Daten</div>')+'</button>'
+ }).join('');
+ box.querySelectorAll('[data-bank]').forEach(b=>b.onclick=()=>{bank=b.dataset.bank;render()});
+}
+function renderDetail(){
+ const r=selected();$('#detailtitle').textContent=bank+' · '+(meeting+1)+'. Meeting '+date(r?.meeting_date);
+ if(!r){$('#detail').innerHTML='<div class="empty">Keine Daten für dieses Meeting</div>';return}
+ if(mode==='incremental'){
+ $('#detail').innerHTML='<p><strong>Neue Bewegung an diesem Meeting:</strong> '+pct(r.move_probability_pct)+' ('+esc(r.move_direction)+')</p><p>Erwartete zusätzliche Zinsänderung: <strong>'+bp(r.incremental_expected_bps)+'</strong></p><p class="warn">Eine vollständige isolierte Hike/Hold/Cut-Verteilung ist in dieser Quelle nicht vorhanden. Sie wird nicht aus kumulierten Prozenten abgeleitet.</p>';
+ }else{
+ const c=r.cumulative;$('#detail').innerHTML=[['Hike',c.higher,'var(--hike)'],['Hold',c.same,'var(--hold)'],['Cut',c.lower,'var(--cut)']].map(([k,v,color])=>'<div style="margin:14px 0"><div class="row"><strong>'+k+'</strong><span>'+pct(v)+'</span></div><div class="bar"><i style="background:'+color+';width:'+v+'%"></i></div></div>').join('')+'<p>Implizierter Zins: <strong>'+pct(r.implied_rate_pct)+'</strong></p><small>Diese Chancen beziehen sich kumuliert auf das heutige Zinsniveau.</small>';
+ }
+}
+function renderDeltas(){
+ const r=selected();if(!r){$('#deltas').innerHTML='<div class="empty">Keine Werte</div>';return}
+ const prior=history.filter(x=>x.bank===bank&&x.meeting_date===r.meeting_date).sort((a,b)=>a.retrieved_at.localeCompare(b.retrieved_at));
+ const old=prior.length>1?prior[prior.length-2]:null;
+ if(!old){$('#deltas').innerHTML='<div class="empty">Noch kein früherer abweichender Snapshot für dieses Meeting vorhanden.</div>';return}
+ const d=(x,y)=>typeof x==='number'&&typeof y==='number'?(x-y>=0?'+':'')+fmt(x-y)+' pp':'k. A.';
+ $('#deltas').innerHTML='<table><tr><th>Merkmal</th><th>Aktuell</th><th>Änderung</th></tr>'+['higher','same','lower'].map(k=>'<tr><td>'+({higher:'Hike',same:'Hold',lower:'Cut'}[k])+'</td><td>'+pct(r.cumulative[k])+'</td><td>'+d(r.cumulative[k],old.cumulative[k])+'</td></tr>').join('')+'</table><p><small>Vorheriger geänderter Datensatz: '+esc(old.retrieved_at)+'</small></p>';
+}
+function plot(canvas,series,{minY=null,maxY=null,suffix='',empty='Keine Daten'}={}){
+ const ratio=window.devicePixelRatio||1;const w=canvas.clientWidth||700,h=330;
+ canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio);
+ const g=canvas.getContext('2d');g.scale(ratio,ratio);g.clearRect(0,0,w,h);
+ const left=48,right=14,top=24,bottom=38;
+ const points=series.flatMap(s=>s.points).filter(p=>Number.isFinite(p.y)&&Number.isFinite(p.x));
+ if(!points.length){g.fillStyle='#91a2b9';g.font='13px system-ui';g.fillText(empty,40,60);return}
+ const x0=Math.min(...points.map(p=>p.x)),x1=Math.max(...points.map(p=>p.x));
+ let y0=minY??Math.min(0,...points.map(p=>p.y)),y1=maxY??Math.max(0,...points.map(p=>p.y));
+ if(y0===y1)y1=y0+1;const pad=(y1-y0)*.08;if(minY===null)y0-=pad;if(maxY===null)y1+=pad;
+ const X=x=>left+(x-x0)/(x1-x0||1)*(w-left-right),Y=y=>h-bottom-(y-y0)/(y1-y0)*(h-top-bottom);
+ g.font='11px system-ui';g.lineWidth=1;g.textAlign='right';
+ for(let i=0;i<=5;i++){const v=y0+(y1-y0)*i,y=Y(v);g.strokeStyle='#253243';g.beginPath();g.moveTo(left,y);g.lineTo(w-right,y);g.stroke();g.fillStyle='#8a9aaf';g.fillText(Math.round(v)+suffix,left-7,y+4)}
+ for(let i=0;i<=4;i++){const x=x0+(x1-x0)*i;const dt=new Date(x);g.fillStyle='#8a9aaf';g.textAlign='center';g.fillText(dt.toLocaleDateString('de-DE',{month:'short',year:'2-digit'}),X(x),h-13)}
+ for(const s of series){const ps=s.points.filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)).sort((a,b)=>a.x-b.x);if(!ps.length)continue;
+ g.strokeStyle=s.color;g.lineWidth=2.3;g.beginPath();ps.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.stroke();
+ for(const p of ps){g.fillStyle=s.color;g.beginPath();g.arc(X(p.x),Y(p.y),2.6,0,2*Math.PI);g.fill()}}
+}
+function renderPath(){
+ const lines=[],leaders=[];
+ for(const b of BANKS){
+ const rows=grp(latest.records||[],b).slice(0,pathMode==='two'?2:9);
+ if(!rows.length)continue;
+ const base=rows[0].implied_rate_pct-rows[0].incremental_expected_bps/100;
+ const points=rows.map(r=>({x:Date.parse(r.meeting_date+'T00:00:00Z'),y:(r.implied_rate_pct-base)*100}));
+ const current=Date.parse((latest.retrieved_at||new Date().toISOString()).slice(0,10)+'T00:00:00Z');
+ lines.push({name:b,color:COLORS[b],points:[{x:current,y:0},...points]});
+ if(rows.length===(pathMode==='two'?2:9))leaders.push({bank:b,delta:points.at(-1).y});
+ }
+ plot($('#path'),lines,{suffix:'bp'});
+ $('#legend').innerHTML=lines.map(x=>'<span><i class="swatch" style="background:'+x.color+'"></i>'+x.name+'</span>').join('');
+ // A ranking only makes sense with a shared horizon. Avoid falsely declaring a cross-bank winner here.
+ $('#leader').textContent='Stärkste Zinserhöhung: bewusst nicht gerankt – Sitzungsdaten und damit der Zeithorizont unterscheiden sich. Die Linien zeigen die relative Erwartung je Zentralbank.';
+}
+function renderHistory(){
+ const r=selected();if(!r){plot($('#historyChart'),[],{});return}
+ const rows=history.filter(x=>x.bank===bank&&x.meeting_date===r.meeting_date).sort((a,b)=>a.retrieved_at.localeCompare(b.retrieved_at));
+ plot($('#historyChart'),[{color:COLORS[bank],points:rows.map(x=>({x:Date.parse(x.retrieved_at),y:x.cumulative?.higher}))}],{minY:0,maxY:100,suffix:'%'});
+}
+function renderSources(){
+ const errors=latest.errors||{};$('#sourceInfo').innerHTML='<p>Letzter Abruf: '+esc(latest.retrieved_at||'noch nicht erfolgt')+'. <strong>Abrufzeit ≠ bestätigte Zeit des Marktdaten-Updates.</strong></p>'+
+ '<p>Quelle: <a href="https://centralbank.watch/" target="_blank" rel="noopener noreferrer">centralbank.watch</a>. Keine offizielle API. Status: '+esc(latest.status||'unbekannt')+'.</p>'+
+ (Object.keys(errors).length?'<p class="warn">Abruffehler: '+Object.entries(errors).map(([b,e])=>esc(b+': '+e)).join(' · ')+'</p>':'');
+}
+function render(){renderCards();renderDetail();renderDeltas();renderPath();renderHistory();renderSources()}
+document.querySelectorAll('[data-meeting]').forEach(b=>b.onclick=()=>{meeting=+b.dataset.meeting;setActive('meeting',meeting);render()});
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;setActive('mode',mode);render()});
+document.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{pathMode=b.dataset.path;setActive('path',pathMode);render()});
+window.addEventListener('resize',()=>{renderPath();renderHistory()});
+Promise.all([fetch('../data/latest.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('latest.json HTTP '+r.status);return r.json()}),fetch('../data/history.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('history.json HTTP '+r.status);return r.json()})])
+.then(([l,h])=>{latest=l;history=h;$('#status').textContent=(l.records||[]).length?'Daten: '+(l.retrieved_at||'Zeit unbekannt'):'Noch keine Live-Daten. GitHub Actions → Test and collect → Run workflow.';render()})
+.catch(e=>{$('#status').textContent='Daten konnten nicht geladen werden: '+e.message;render()});
+</script></body></html>
