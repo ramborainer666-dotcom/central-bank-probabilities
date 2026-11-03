@@ -74,19 +74,19 @@ def parse_bank(html: str, bank: str, retrieved_at: str) -> list[dict]:
         # Auf der RBA-Seite enthält die ältere Zusammenfassung Kurzdatums-Angaben.
         # Die vollständige Preistabelle kann abweichend formatiert sein.
         for tr in soup.select("tr"):
-            cells = [re.sub(r"\\s+", " ", x.get_text(" ", strip=True)) for x in tr.select("td")]
+            cells = [re.sub(r"\s+", " ", x.get_text(" ", strip=True)) for x in tr.select("td")]
             if len(cells) < 6:
                 continue
-            date_match = re.search(rf"({MONTHS})\\s+\\d{{1,2}},\\s+20\\d{{2}}", cells[0])
+            date_match = re.search(rf"({MONTHS})\s+\d{{1,2}},\s+20\d{{2}}", cells[0])
             if not date_match:
                 continue
             mtg = datetime.strptime(date_match.group(0), "%B %d, %Y").date()
             if mtg < today:
                 continue
-            move_m = re.search(r"(\\d+(?:\\.\\d+)?)\\s*%", cells[1])
-            bp_m = re.search(r"([+-]\\d+(?:\\.\\d+)?)\\s*bp", cells[1])
-            rate_m = re.search(r"(\\d+(?:\\.\\d+)?)\\s*%", cells[2])
-            bands = [re.search(r"(\\d+(?:\\.\\d+)?)\\s*%", c) for c in cells[3:6]]
+            move_m = re.search(r"(\d+(?:\.\d+)?)\s*%", cells[1])
+            bp_m = re.search(r"([+-]\d+(?:\.\d+)?)\s*bp", cells[1])
+            rate_m = re.search(r"(\d+(?:\.\d+)?)\s*%", cells[2])
+            bands = [re.search(r"(\d+(?:\.\d+)?)\s*%", c) for c in cells[3:6]]
             if not (move_m and bp_m and rate_m and all(bands)):
                 continue
             cp = dict(zip(("higher", "same", "lower"), (float(x.group(1)) for x in bands)))
