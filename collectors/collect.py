@@ -77,8 +77,8 @@ def rba_official_cash_rate(session: requests.Session) -> float:
     response = session.get("https://www.rba.gov.au/", timeout=25)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
-    text = re.sub(r"\\s+", " ", " ".join(soup.stripped_strings))
-    m = re.search(r"Cash rate target\\s+(\\d+(?:\\.\\d+)?)\\s*%", text, re.I)
+    text = re.sub(r"\s+", " ", " ".join(soup.stripped_strings))
+    m = re.search(r"Cash rate target\s+(\d+(?:\.\d+)?)\s*%", text, re.I)
     if not m:
         raise ValueError("Offiziellen RBA-Leitzins nicht verifizierbar")
     return float(m.group(1))
