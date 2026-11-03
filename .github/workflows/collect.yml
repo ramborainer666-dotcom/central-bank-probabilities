@@ -2,6 +2,9 @@ name: Test and collect central-bank probabilities
 
 on:
   workflow_dispatch:
+  schedule:
+    # Drei Abrufe an Werktagen, Zeiten UTC (GitHub kann Cron-Laeufe verzoegern).
+    - cron: '17 6,12,19 * * 1-5'
 
 permissions:
   contents: write
