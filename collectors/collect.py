@@ -92,12 +92,12 @@ def main() -> int:
             response = session.get(f"https://centralbank.watch/{slug}/", timeout=25)
             response.raise_for_status()
             rows = parse_bank(response.text, bank, timestamp)
-            if len(rows) < 2:
-                raise ValueError(f"Nur {len(rows)} gültige Meetings gefunden")
+            if len(rows) < 1:
+                raise ValueError(f"Keine gültigen Meetings gefunden")
             updates[bank] = rows
         except Exception as exc:
             errors[bank] = str(exc)[:250]
-    if not updates:
+    if len(updates) < 4:
         print("Abbruch: keine Bank mit mindestens zwei validierten Meetings.", errors, file=sys.stderr)
         return 2
     old_by_bank = {bank: [r for r in previous.get("records", []) if r["bank"] == bank] for bank in BANKS}
