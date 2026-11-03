@@ -69,6 +69,41 @@ def parse_bank(html: str, bank: str, retrieved_at: str) -> list[dict]:
             "incremental_three_way": None,
             "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
         })
+
+    if not result and bank == "RBA":
+        # Auf der RBA-Seite enthält die ältere Zusammenfassung Kurzdatums-Angaben.
+        # Die vollständige Preistabelle kann abweichend formatiert sein.
+        for tr in soup.select("tr"):
+            cells = [re.sub(r"\\s+", " ", x.get_text(" ", strip=True)) for x in tr.select("td")]
+            if len(cells) < 6:
+                continue
+            date_match = re.search(rf"({MONTHS})\\s+\\d{{1,2}},\\s+20\\d{{2}}", cells[0])
+            if not date_match:
+                continue
+            mtg = datetime.strptime(date_match.group(0), "%B %d, %Y").date()
+            if mtg < today:
+                continue
+            move_m = re.search(r"(\\d+(?:\\.\\d+)?)\\s*%", cells[1])
+            bp_m = re.search(r"([+-]\\d+(?:\\.\\d+)?)\\s*bp", cells[1])
+            rate_m = re.search(r"(\\d+(?:\\.\\d+)?)\\s*%", cells[2])
+            bands = [re.search(r"(\\d+(?:\\.\\d+)?)\\s*%", c) for c in cells[3:6]]
+            if not (move_m and bp_m and rate_m and all(bands)):
+                continue
+            cp = dict(zip(("higher", "same", "lower"), (float(x.group(1)) for x in bands)))
+            if not 99.3 <= sum(cp.values()) <= 100.7:
+                continue
+            bp = float(bp_m.group(1))
+            result.append({
+                "bank": bank, "meeting_date": mtg.isoformat(),
+                "source": "centralbank.watch",
+                "source_url": f"https://centralbank.watch/{BANKS[bank]}/",
+                "retrieved_at": retrieved_at,
+                "move_probability_pct": float(move_m.group(1)),
+                "move_direction": "hike" if bp > 0 else "cut" if bp < 0 else "flat",
+                "incremental_expected_bps": bp, "implied_rate_pct": float(rate_m.group(1)),
+                "cumulative": cp, "incremental_three_way": None,
+                "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+            })
     return result[:9]
 
 
