@@ -34,3 +34,13 @@ Workflow `.github/workflows/collect.yml`: Nur `workflow_dispatch`. Keine automat
 ## Datenqualität
 
 Pro Bank werden bis zu 9 zukünftige Meetings gesammelt, um neben dem Zweimeeting-Vergleich auch den längerfristigen relativen Zinspfad zu zeichnen. In `history.json` erscheinen Änderungen nur bei verändertem inhaltlichen Snapshot; `retrieved_at` ist ausdrücklich der Abrufzeitpunkt und **kein** nachgewiesener Markt-Datenzeitpunkt. Quellseite und Fehler bleiben nachvollziehbar.
+
+## Datenqualitaet und bekannte Luecken (03.11.2026)
+
+- Live-Abfrage erfolgreich fuer FED, ECB, BOE, BOJ und SNB; RBNZ kann seit dem Parser-Update auch eine einzelne valide Sitzung speichern.
+- BoC: Die oeffentliche centralbank.watch-Seite hat aktuell keine vertrauenswuerdige Meeting-Preistabelle. Keine geschatzten Daten.
+- RBA: Die RBA hat am 03.11.2026 den offiziellen Cash-Rate-Target auf 4,85 % erhoeht (https://www.rba.gov.au/news/). Die centralbank.watch-Seite zeigt teilweise noch 4,60 % bzw. widerspruechliche Sitzungstermine. Daher vergleicht der Collector RBA-Daten mit dem offiziellen aktuellen Satz und haelt abweichende Daten zurueck. Keine manuelle Umdeutung veralteter Wahrscheinlichkeiten.
+- RateProbability ist **kein automatischer Fallback**: Die Nutzungsbedingungen (https://rateprobability.com/terms) untersagen automatisiertes Scraping ohne schriftliche Erlaubnis.
+- Alte Snapshots werden bei Ausfall einer Quelle nicht als neue Beobachtungen historisiert. `stale_banks` kennzeichnet voruebergehend weiter angezeigte Altwerte.
+- GitHub Actions: drei Abrufversuche an Werktagen um 06:17, 12:17 und 19:17 UTC. Der Workflow garantiert nicht, dass drei verschiedene Marktaktualisierungen bereitstehen.
+- Die Website zeigt kumulierte Hike/Hold/Cut-Verteilung. Die isolierte Bewegung ist keine vollstaendige Drei-Wege-Verteilung; dies ist im Dashboard ausdruecklich gekennzeichnet.
