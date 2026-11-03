@@ -102,8 +102,19 @@ function renderPath(){
  }
  plot($('#path'),lines,{suffix:'bp'});
  $('#legend').innerHTML=lines.map(x=>'<span><i class="swatch" style="background:'+x.color+'"></i>'+x.name+'</span>').join('');
- // A ranking only makes sense with a shared horizon. Avoid falsely declaring a cross-bank winner here.
- $('#leader').textContent='Stärkste Zinserhöhung: bewusst nicht gerankt – Sitzungsdaten und damit der Zeithorizont unterscheiden sich. Die Linien zeigen die relative Erwartung je Zentralbank.';
+ // Ranking am gemeinsamen Kalender-Stichtag, keine Extrapolation nach der letzten vorliegenden Sitzung.
+ const active = BANKS.map(b=>({bank:b,rows:grp(latest.records||[],b)})).filter(x=>x.rows.length);
+ if(active.length<2){$('#leader').textContent='Kalendergleicher Vergleich noch nicht möglich (zu wenig Banken mit Daten).';return}
+ const horizon = active.map(x=>x.rows.at(-1).meeting_date).sort()[0];
+ const rank = active.map(x=>{
+   const valid=x.rows.filter(r=>r.meeting_date<=horizon);
+   if(!valid.length)return null;
+   const currentRate=x.rows[0].implied_rate_pct-x.rows[0].incremental_expected_bps/100;
+   return {bank:x.bank,delta:(valid.at(-1).implied_rate_pct-currentRate)*100};
+ }).filter(Boolean).sort((a,b)=>b.delta-a.delta);
+ if(!rank.length){$('#leader').textContent='Noch keine vergleichbaren Zinspfade.';return}
+ const hi=rank[0],lo=rank.at(-1);
+ $('#leader').textContent='Gemeinsamer Stichtag '+date(horizon)+': stärkste eingepreiste Straffung '+hi.bank+' ('+bp(hi.delta)+'), stärkste Lockerung / geringste Straffung '+lo.bank+' ('+bp(lo.delta)+'). Basis: letzter bekannter Sitzungssatz bis zum Stichtag, kein interpolierter Marktpreis. Verglichene Banken: '+rank.length+'/'+BANKS.length+'.';
 }
 function renderHistory(){
  const r=selected();if(!r){plot($('#historyChart'),[],{});return}
