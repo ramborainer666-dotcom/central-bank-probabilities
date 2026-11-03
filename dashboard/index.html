@@ -48,9 +48,9 @@ const date=s=>s?new Date(s+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit
 function setActive(attr,value){document.querySelectorAll('[data-'+attr+']').forEach(b=>b.classList.toggle('selected',b.dataset[attr]===String(value)))}
 function renderCards(){
  const box=$('#banks');box.innerHTML=BANKS.map(b=>{
- const r=grp(latest.records||[],b)[meeting];const c=r?.cumulative,values=c?[c.higher,c.same,c.lower]:[0,0,0];
+ const r=grp(latest.records||[],b)[meeting];const stale=(latest.stale_banks||[]).includes(b);const c=r?.cumulative,values=c?[c.higher,c.same,c.lower]:[0,0,0];
  return '<button class="bank '+(bank===b?'active':'')+'" style="--bank:'+COLORS[b]+'" data-bank="'+b+'"><header><span class="dot"></span><strong>'+b+'</strong><small>'+date(r?.meeting_date)+'</small></header>'+
- (r?'<div class="bar">'+values.map((v,i)=>'<i style="width:'+Math.max(0,v)+'%;background:'+['var(--hike)','var(--hold)','var(--cut)'][i]+'"></i>').join('')+'</div><div class="stats"><span>Hike '+pct(c.higher)+'</span><span>Hold '+pct(c.same)+'</span><span>Cut '+pct(c.lower)+'</span></div><div class="small">Δ Zinspfad: '+bp(r.incremental_expected_bps)+'</div>':'<div class="empty">Keine validierten Daten</div>')+'</button>'
+ (r?'<div class="bar">'+values.map((v,i)=>'<i style="width:'+Math.max(0,v)+'%;background:'+['var(--hike)','var(--hold)','var(--cut)'][i]+'"></i>').join('')+'</div><div class="stats"><span>Hike '+pct(c.higher)+'</span><span>Hold '+pct(c.same)+'</span><span>Cut '+pct(c.lower)+'</span></div><div class="small">Δ Zinspfad: '+bp(r.incremental_expected_bps)+(stale?' · ⚠ VERALTETER STAND':'')+'</div>':'<div class="empty">Keine validierten Daten</div>')+'</button>'
  }).join('');
  box.querySelectorAll('[data-bank]').forEach(b=>b.onclick=()=>{bank=b.dataset.bank;render()});
 }
@@ -124,7 +124,7 @@ function renderHistory(){
 function renderSources(){
  const errors=latest.errors||{};$('#sourceInfo').innerHTML='<p>Letzter Abruf: '+esc(latest.retrieved_at||'noch nicht erfolgt')+'. <strong>Abrufzeit ≠ bestätigte Zeit des Marktdaten-Updates.</strong></p>'+
  '<p>Quelle: <a href="https://centralbank.watch/" target="_blank" rel="noopener noreferrer">centralbank.watch</a>. Keine offizielle API. Status: '+esc(latest.status||'unbekannt')+'.</p>'+
- (Object.keys(errors).length?'<p class="warn">Abruffehler: '+Object.entries(errors).map(([b,e])=>esc(b+': '+e)).join(' · ')+'</p>':'');
+ (Object.keys(errors).length?'<p class="warn">Abruffehler: '+Object.entries(errors).map(([b,e])=>esc(b+': '+e)).join(' · ')+'</p>':'')+'<p>Ausgefallene Datenquellen werden im Panel als veraltet markiert, statt als aktuell ausgegeben.</p>';
 }
 function render(){renderCards();renderDetail();renderDeltas();renderPath();renderHistory();renderSources()}
 document.querySelectorAll('[data-meeting]').forEach(b=>b.onclick=()=>{meeting=+b.dataset.meeting;setActive('meeting',meeting);render()});
