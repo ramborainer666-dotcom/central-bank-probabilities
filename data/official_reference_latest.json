@@ -1,7 +1,19 @@
 {
-  "retrieved_at": null,
-  "records": [],
-  "errors": {},
-  "status": "no_live_data",
-  "note": "Official benchmark and policy rates only; not futures-implied probabilities."
+  "retrieved_at": "2026-11-04T14:45:39Z",
+  "records": [
+    {
+      "bank": "RBA",
+      "rate_type": "policy_target",
+      "rate_name": "Cash Rate Target",
+      "rate_pct": 4.85,
+      "as_of_date": "2026-11-04",
+      "source": "https://www.rba.gov.au/cash-rate-target-overview.html"
+    }
+  ],
+  "errors": {
+    "BOC": "404 Client Error: Not Found for url: https://www.bankofcanada.ca/valet/observations/CORRA/json?recent=10"
+  },
+  "status": "partial",
+  "note": "These are official benchmark/target rates, NOT futures-implied rates or meeting probabilities.",
+  "stale_banks": []
 }
