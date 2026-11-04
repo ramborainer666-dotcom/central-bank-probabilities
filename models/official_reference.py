@@ -81,16 +81,24 @@ def collect(session=None) -> dict:
             "note":"These are official benchmark/target rates, NOT futures-implied rates or meeting probabilities."}
 
 def persist(result: dict, path: Path=OUTPUT) -> bool:
-    # Do not overwrite a good snapshot if both official sources fail.
+    # Do not overwrite a good snapshot if all official sources fail.
     if not result["records"]:
         return False
-    path.parent.mkdir(parents=True,exist_ok=True)
+    path.parent.mkdir(parents=True, exist_ok=True)
     previous=json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    fresh={r["bank"]:r for r in result["records"]}
+    old={r["bank"]:r for r in previous.get("records",[])}
+    stale=[bank for bank in result["errors"] if bank in old]
+    merged=dict(old)
+    merged.update(fresh)
+    result={**result,"records":sorted(merged.values(),key=lambda r:r["bank"]),"stale_banks":stale}
     def fingerprint(doc):
         return {(r["bank"],r["as_of_date"],r["rate_pct"]) for r in doc.get("records",[])}
-    if fingerprint(previous)==fingerprint(result) and previous.get("errors")==result.get("errors"):
+    if (fingerprint(previous)==fingerprint(result) and
+        previous.get("errors")==result.get("errors") and
+        previous.get("stale_banks",[])==stale):
         return False
-    path.write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    path.write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\\n",encoding="utf-8")
     return True
 
 if __name__=="__main__":
