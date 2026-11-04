@@ -1,0 +1,36 @@
+name: Check BoC public prediction-market API
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Three market checks on weekdays, UTC.
+    - cron: '27 6,12,19 * * 1-5'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: boc-prediction-markets
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python -m models.boc_prediction_markets
+      - name: Commit validated odds only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/boc_prediction_market_latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: update BoC prediction-market odds"
+            git push
+          fi
