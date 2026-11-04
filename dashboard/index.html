@@ -34,6 +34,7 @@ a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color
 </div>
 <section class="panel"><h2>Historische Hike-Wahrscheinlichkeit (kumuliert, für gleiches Meeting-Datum)</h2>
 <canvas id="historyChart" role="img" aria-label="Historische Wahrscheinlichkeiten"></canvas><p><small>Nur echte gespeicherte Änderungen. Die Zeitreihe bleibt an ein konkretes Meeting-Datum gebunden, auch wenn Sitzungen vorrücken.</small></p></section>
+<section class="panel"><h2>RBA · Open-Data-Wahrscheinlichkeiten (CC BY 4.0)</h2><div id="rbaOpenData" class="muted">Datenquelle wird geprüft …</div><p><small>Modellierte Wahrscheinlichkeiten von <a href="https://rbaratewatch.com/methodology/" target="_blank" rel="noopener noreferrer">RBA Rate Watch</a>, CC BY 4.0, kein TradingView-/Barchart-Scraping. Nur gültige neue Snapshots, getrennt von den bisherigen Central-Bank-Watch-Daten.</small></p></section>
 <section class="panel"><h2>Offizielle Referenzzinssätze · BOC / RBA</h2>
 <div id="officialRates" class="muted">Lade offizielle Zinsdaten …</div>
 <p><small>Dies sind veröffentlichte aktuelle bzw. zuletzt verfügbare Zinsen, keine impliziten Erwartungen und keine Wahrscheinlichkeiten. Quelle und Gültigkeitsdatum werden getrennt ausgewiesen.</small></p></section>
@@ -136,6 +137,20 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.datase
 document.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{pathMode=b.dataset.path;setActive('path',pathMode);render()});
 window.addEventListener('resize',()=>{renderPath();renderHistory()});
 
+
+
+async function loadRbaOpenData(){
+ try{
+ const response=await fetch('../data/rba_external_model_latest.json',{cache:'no-store'});
+ if(!response.ok)throw Error('HTTP '+response.status);
+ const doc=await response.json(),rows=doc.records||[];
+ if(!rows.length){$('#rbaOpenData').innerHTML='<p>Noch kein aktueller, vollständig validierter Datensatz verfügbar.</p>';return}
+ const age=(Date.now()-Date.parse(doc.source_asof_utc))/3600000;
+ if(!Number.isFinite(age)||age>72||age<-.2){$('#rbaOpenData').innerHTML='<p class="warn">Quelle veraltet oder Datum unplausibel; Wahrscheinlichkeiten werden nicht als aktuell angezeigt.</p>';return}
+ $('#rbaOpenData').innerHTML='<p>Quelle zuletzt aktualisiert: '+esc(doc.source_asof_utc)+'</p><table><tr><th>Meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Erwartung</th></tr>'+rows.slice(0,9).map(r=>'<tr><td>'+date(r.meeting_date)+'</td><td>'+pct(r.probabilities_pct.cut)+'</td><td>'+pct(r.probabilities_pct.hold)+'</td><td>'+pct(r.probabilities_pct.hike)+'</td><td>'+bp(r.expected_move_bps)+'</td></tr>').join('')+'</table>';
+ }catch(e){$('#rbaOpenData').textContent='Kein verifizierter RBA-Modellsnapshot.'}
+}
+loadRbaOpenData();
 
 async function loadOfficialRates(){
  try{
