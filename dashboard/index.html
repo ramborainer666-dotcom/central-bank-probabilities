@@ -34,6 +34,9 @@ a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color
 </div>
 <section class="panel"><h2>Historische Hike-Wahrscheinlichkeit (kumuliert, für gleiches Meeting-Datum)</h2>
 <canvas id="historyChart" role="img" aria-label="Historische Wahrscheinlichkeiten"></canvas><p><small>Nur echte gespeicherte Änderungen. Die Zeitreihe bleibt an ein konkretes Meeting-Datum gebunden, auch wenn Sitzungen vorrücken.</small></p></section>
+<section class="panel"><h2>Offizielle Referenzzinssätze · BOC / RBA</h2>
+<div id="officialRates" class="muted">Lade offizielle Zinsdaten …</div>
+<p><small>Dies sind veröffentlichte aktuelle bzw. zuletzt verfügbare Zinsen, keine impliziten Erwartungen und keine Wahrscheinlichkeiten. Quelle und Gültigkeitsdatum werden getrennt ausgewiesen.</small></p></section>
 <section class="panel"><h2>Eigene Futures-Berechnung · getrennte Modellwerte</h2><div id="modeldata" class="muted"><p>Noch keine autorisierten Futureskurse eingespeist.</p></div><p><small>Diese Werte sind modellierte Wahrscheinlichkeiten (Hold vs. genau ein 25-bp-Hike/Cut). Sie werden nicht mit den Wahrscheinlichkeiten von centralbank.watch vermischt.</small></p></section>
 <section class="panel"><h2>Transparenz der Datenquellen</h2><div id="sourceInfo" class="muted"></div></section>
 </main>
@@ -132,6 +135,20 @@ document.querySelectorAll('[data-meeting]').forEach(b=>b.onclick=()=>{meeting=+b
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;setActive('mode',mode);render()});
 document.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{pathMode=b.dataset.path;setActive('path',pathMode);render()});
 window.addEventListener('resize',()=>{renderPath();renderHistory()});
+
+
+async function loadOfficialRates(){
+ try{
+  const response=await fetch('../data/official_reference_latest.json',{cache:'no-store'});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  const d=await response.json();
+  const values=d.records||[];
+  if(!values.length){$('#officialRates').innerHTML='<p>Noch keine verifizierten amtlichen Referenzdaten gespeichert.</p>';return;}
+  const stale=new Set(d.stale_banks||[]);
+  $('#officialRates').innerHTML='<table><tr><th>Bank</th><th>Referenzsatz</th><th>Zins</th><th>Gültig seit</th><th>Status</th></tr>'+values.map(r=>'<tr><td>'+esc(r.bank)+'</td><td>'+esc(r.rate_name)+'</td><td>'+pct(r.rate_pct)+'</td><td>'+esc(r.as_of_date)+'</td><td>'+(stale.has(r.bank)?'⚠ Letzter Stand':'Quellenabruf erfolgreich')+'</td></tr>').join('')+'</table><p><small>Letzter Abruf: '+esc(d.retrieved_at||'unbekannt')+'. <a href="https://www.bankofcanada.ca/rates/interest-rates/corra/" target="_blank" rel="noopener noreferrer">BoC CORRA</a> · <a href="https://www.rba.gov.au/cash-rate-target-overview.html" target="_blank" rel="noopener noreferrer">RBA Cash Rate</a></small></p>';
+ }catch(e){$('#officialRates').textContent='Referenzzins-Datei kann momentan nicht geladen werden.';}
+}
+loadOfficialRates();
 
 async function loadModel(){
  try{
