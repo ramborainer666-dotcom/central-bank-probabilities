@@ -44,3 +44,21 @@ Pro Bank werden bis zu 9 zukünftige Meetings gesammelt, um neben dem Zweimeetin
 - Alte Snapshots werden bei Ausfall einer Quelle nicht als neue Beobachtungen historisiert. `stale_banks` kennzeichnet voruebergehend weiter angezeigte Altwerte.
 - GitHub Actions: drei Abrufversuche an Werktagen um 06:17, 12:17 und 19:17 UTC. Der Workflow garantiert nicht, dass drei verschiedene Marktaktualisierungen bereitstehen.
 - Die Website zeigt kumulierte Hike/Hold/Cut-Verteilung. Die isolierte Bewegung ist keine vollstaendige Drei-Wege-Verteilung; dies ist im Dashboard ausdruecklich gekennzeichnet.
+
+## Eigene Futures-Berechnung (separater Datenkanal)
+
+Die Engine `models/futures.py` berechnet aus dem Preis eines tagesdurchschnittsbasierten 100-minus-Zins-Kontrakts den erwarteten Zinssatz nach einer Sitzung. Bei CORRA COA benutzt sie eine explizit approximierte Zwei-Block-Tagesaufzinsung; die korrekte Settlement-Berechnung benötigt den echten Fixing-Kalender samt Feiertagen und Overnight-Rates.
+
+**Keine Live-Kurse werden ohne Genehmigung beschafft.** Die Quellenmethodik ist in den Börsendokumentationen belegt:
+- CME: https://www.cmegroup.com/articles/2023/understanding-the-cme-group-fedwatch-tool-methodology.html
+- ASX: https://www.asx.com.au/markets/trade-our-derivatives-market/futures-market/rba-rate-tracker
+- TMX CORRA COA: https://www.m-x.ca/en/markets/interest-rate-derivatives/coa
+
+Ablauf:
+1. `data/futures_quotes.template.json` als `data/futures_quotes.json` kopieren. Nur überprüfte Werte einer für diesen Zweck freigegebenen Kursquelle verwenden. `meeting_effective` bezeichnet den Kalendertag, ab dem der neue Overnight-Referenzzins im Kontrakt gilt; nicht blind den Sitzungstag einsetzen.
+2. `python -m models.calculate --input data/futures_quotes.json`
+3. `data/model_latest.json` separat im Dashboard ansehen. Die bestehende `data/latest.json` wird **nicht** überschrieben.
+
+Derzeit enthält `model_latest.json` bewusst keine Futures-Beobachtungen. Bei einem erwarteten Schritt über 25 bp liefert das einfache binäre Modell `null` für Hike/Hold/Cut, statt scheinbar exakte Prozentwerte zu behaupten. Für mehrere Meetings braucht es für jedes Meeting passende Futures, einen konsistenten Ausgangssatz, ein Termin-/Fixing-Modell und eine vollständige Wahrscheinlichkeitsverteilung; die Ein-Meeting-Engine ist dafür noch **kein Ersatz**.
+
+Tests: `python -m unittest discover -s tests -v`. Der separate CI-Workflow `model-tests.yml` startet bei Codeänderungen.
