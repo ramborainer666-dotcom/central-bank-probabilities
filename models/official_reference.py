@@ -98,7 +98,7 @@ def persist(result: dict, path: Path=OUTPUT) -> bool:
         previous.get("errors")==result.get("errors") and
         previous.get("stale_banks",[])==stale):
         return False
-    path.write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\\n",encoding="utf-8")
+    path.write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     return True
 
 if __name__=="__main__":
