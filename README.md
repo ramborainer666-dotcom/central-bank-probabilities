@@ -62,3 +62,14 @@ Ablauf:
 Derzeit enthält `model_latest.json` bewusst keine Futures-Beobachtungen. Bei einem erwarteten Schritt über 25 bp liefert das einfache binäre Modell `null` für Hike/Hold/Cut, statt scheinbar exakte Prozentwerte zu behaupten. Für mehrere Meetings braucht es für jedes Meeting passende Futures, einen konsistenten Ausgangssatz, ein Termin-/Fixing-Modell und eine vollständige Wahrscheinlichkeitsverteilung; die Ein-Meeting-Engine ist dafür noch **kein Ersatz**.
 
 Tests: `python -m unittest discover -s tests -v`. Der separate CI-Workflow `model-tests.yml` startet bei Codeänderungen.
+
+## Offizielle Referenzzinssätze – neu (v0.4)
+
+Zusätzlicher und technisch unabhängiger Datenabruf über `models/official_reference.py`:
+- **BoC:** CORRA-Fixing über die ausdrücklich dokumentierte Bank-of-Canada-Valet-API: https://www.bankofcanada.ca/valet/docs/ und https://www.bankofcanada.ca/rates/interest-rates/corra/ .
+- **RBA:** Aktueller Cash-Rate-Target samt Wirksamkeitsdatum: https://www.rba.gov.au/cash-rate-target-overview.html . Rechte: https://www.rba.gov.au/copyright/ . Quelle: Reserve Bank of Australia 2026. Kein RBA-Endorsement impliziert.
+- Output: `data/official_reference_latest.json` mit `rate_type`, `as_of_date` und `retrieved_at`. Fehlgeschlagene Quellen werden als `stale_banks` gemeldet; ältere Daten bleiben bei Teilausfall sichtbar.
+- Workflow `.github/workflows/official-references.yml`: werktags 12:43 UTC; auch manuell startbar. Keine Futureskurse werden abgerufen.
+- Tests: `python -m unittest discover -s tests -v`.
+
+**Wichtig:** Die Montréal-Exchange-COA-Preise und ASX-IB-Futures-Preise werden **noch nicht automatisiert**. Eine Website mit Kursen ist keine Zusage zur Nutzung als automatisierter Zeitreihen-Feed. Auf Nachfrage Freigabe oder offiziellen lizenzierten Marktdatenfeed einrichten. Quellgebundene Futuresdaten nicht mit staatlichen offiziellen Referenzzinssätzen verwechseln.
