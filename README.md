@@ -73,3 +73,11 @@ Zusätzlicher und technisch unabhängiger Datenabruf über `models/official_refe
 - Tests: `python -m unittest discover -s tests -v`.
 
 **Wichtig:** Die Montréal-Exchange-COA-Preise und ASX-IB-Futures-Preise werden **noch nicht automatisiert**. Eine Website mit Kursen ist keine Zusage zur Nutzung als automatisierter Zeitreihen-Feed. Auf Nachfrage Freigabe oder offiziellen lizenzierten Marktdatenfeed einrichten. Quellgebundene Futuresdaten nicht mit staatlichen offiziellen Referenzzinssätzen verwechseln.
+
+## Automatische Alternativdaten (v0.5)
+
+**RBA:** RBA Rate Watch stellt eigene modellierte Wahrscheinlichkeiten als JSON unter CC BY 4.0 zur Verfügung, mit Quellenangabe: https://rbaratewatch.com/methodology/ . Der neue Collector `models/rba_open_model.py` nutzt **ausschließlich die veröffentlichten Modell-Ergebnisse**, nicht den ASX-Futures-Feed im Hintergrund. Er prüft den Herausgeber-Zeitstempel (<72 h), das Datum des nächsten Meetings, die Summe der fünf Wahrscheinlichkeiten und den aktuellen offiziellen RBA-Zins. Bei fehlenden oder veralteten Daten schreibt er nichts Neues. Workflow: `.github/workflows/rba-ccby.yml` (werktäglich 06:45 UTC). Kein Hinweis auf einen verifizierten Live-Lauf bis zum GitHub-Test.
+
+**BoC:** Der öffentliche, dokumentierte Polymarket-Gamma-API-Endpunkt https://docs.polymarket.com/api-reference/events/get-event-by-slug liefert die verschiedenen handelsbasierten Meeting-Ausgänge. Der Collector `models/boc_prediction_markets.py` ruft registrierte BoC-Events ab, kontrolliert Meeting-Datum, Marktöffnung, Mindestvolumen, Vollständigkeit der Kategorien und die Summe der Preise. Niedrige Liquidität oder widersprüchliche Preise -> kein Snapshot. Workflow `.github/workflows/boc-prediction-market.yml` (werktags 06:27/12:27/19:27 UTC). Auch hier ist der erste echte Lauf noch zu bestätigen.
+
+**Unterschied:** Polymarket-Preise sind *Prognosemarktpreise*, keine Futures- oder OIS-Raten; RBA Rate Watch veröffentlicht *Modellwahrscheinlichkeiten aus Futures*, aber nicht die originären Preisfeeds. Die beiden Kategorien werden getrennt im Browser-Dashboard und in separaten JSON-Dateien geführt. Der vorhandene Central-Bank-Watch-Collector bleibt unverändert. Keine manuellen Dateneingaben erforderlich. Bis zum Live-Test keine Garantie, dass die externen Quellen aktuelle und vollständige Wahrscheinlichkeiten liefern.
