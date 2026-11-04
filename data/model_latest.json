@@ -1,0 +1,6 @@
+{
+  "status": "no_valid_quotes",
+  "records": [],
+  "errors": [],
+  "warning": "No authorized market quotations have been supplied. Independent futures model is not live."
+}
