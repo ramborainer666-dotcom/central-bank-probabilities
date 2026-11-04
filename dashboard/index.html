@@ -34,6 +34,7 @@ a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color
 </div>
 <section class="panel"><h2>Historische Hike-Wahrscheinlichkeit (kumuliert, für gleiches Meeting-Datum)</h2>
 <canvas id="historyChart" role="img" aria-label="Historische Wahrscheinlichkeiten"></canvas><p><small>Nur echte gespeicherte Änderungen. Die Zeitreihe bleibt an ein konkretes Meeting-Datum gebunden, auch wenn Sitzungen vorrücken.</small></p></section>
+<section class="panel"><h2>BoC · Prognosemarkt-Wahrscheinlichkeiten (Polymarket API)</h2><div id="bocMarketOdds" class="muted">Prüfe Marktdaten …</div><p><small>Separater Datenkanal: gehandelte Prognosemarktpreise über die offizielle öffentliche <a href="https://docs.polymarket.com/api-reference/events/get-event-by-slug" target="_blank" rel="noopener noreferrer">Gamma API</a>; keine CORRA-/OIS-basierten Zinserwartungen. Bei unvollständiger oder illiquider Preisstellung wird kein Wert ausgegeben.</small></p></section>
 <section class="panel"><h2>RBA · Open-Data-Wahrscheinlichkeiten (CC BY 4.0)</h2><div id="rbaOpenData" class="muted">Datenquelle wird geprüft …</div><p><small>Modellierte Wahrscheinlichkeiten von <a href="https://rbaratewatch.com/methodology/" target="_blank" rel="noopener noreferrer">RBA Rate Watch</a>, CC BY 4.0, kein TradingView-/Barchart-Scraping. Nur gültige neue Snapshots, getrennt von den bisherigen Central-Bank-Watch-Daten.</small></p></section>
 <section class="panel"><h2>Offizielle Referenzzinssätze · BOC / RBA</h2>
 <div id="officialRates" class="muted">Lade offizielle Zinsdaten …</div>
@@ -138,6 +139,20 @@ document.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{pathMode=b.da
 window.addEventListener('resize',()=>{renderPath();renderHistory()});
 
 
+
+
+async function loadBocMarketOdds(){
+ try{
+ const resp=await fetch('../data/boc_prediction_market_latest.json',{cache:'no-store'});
+ if(!resp.ok)throw Error('Missing file');
+ const doc=await resp.json(),rows=doc.records||[];
+ if(!rows.length){$('#bocMarketOdds').innerHTML='<p>Noch keine anhand der offiziellen API bestätigten Prognosemarktpreise gespeichert.</p>';return}
+ const age=(Date.now()-Date.parse(doc.retrieved_at))/3600000;
+ if(!Number.isFinite(age)||age>48||age<-.2){$('#bocMarketOdds').innerHTML='<p class="warn">Letzter gespeicherter BoC-Snapshot ist älter als 48 Stunden. Keine aktuellen Wahrscheinlichkeiten verfügbar.</p>';return}
+ $('#bocMarketOdds').innerHTML='<table><tr><th>Meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Preis-Summe</th><th>Link</th></tr>'+rows.map(r=>'<tr><td>'+date(r.meeting_date)+'</td><td>'+pct(r.probabilities_pct.cut)+'</td><td>'+pct(r.probabilities_pct.hold)+'</td><td>'+pct(r.probabilities_pct.hike)+'</td><td>'+pct(r.raw_sum_pct)+'</td><td><a href="'+esc(r.source_url)+'" target="_blank" rel="noopener noreferrer">Markt</a></td></tr>').join('')+'</table><p><small>API-Abruf: '+esc(doc.retrieved_at)+'. Der Spread zwischen angebotenen Preisen kann die Summen verzerren. Keine Normalisierung auf 100 %.</small></p>';
+ }catch(e){$('#bocMarketOdds').textContent='BoC-Prognosemarktdaten momentan nicht verfügbar.'}
+}
+loadBocMarketOdds();
 
 async function loadRbaOpenData(){
  try{
