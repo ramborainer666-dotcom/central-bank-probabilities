@@ -1,6 +1,14 @@
 {
-  "retrieved_at": "2026-11-04T14:45:39Z",
+  "retrieved_at": "2026-11-04T14:47:06Z",
   "records": [
+    {
+      "bank": "BOC",
+      "rate_type": "overnight_benchmark",
+      "rate_name": "CORRA",
+      "rate_pct": 2.53,
+      "as_of_date": "2026-11-03",
+      "source": "https://www.bankofcanada.ca/valet/observations/AVG.INTWO/json?recent=10"
+    },
     {
       "bank": "RBA",
       "rate_type": "policy_target",
@@ -10,10 +18,8 @@
       "source": "https://www.rba.gov.au/cash-rate-target-overview.html"
     }
   ],
-  "errors": {
-    "BOC": "404 Client Error: Not Found for url: https://www.bankofcanada.ca/valet/observations/CORRA/json?recent=10"
-  },
-  "status": "partial",
+  "errors": {},
+  "status": "ok",
   "note": "These are official benchmark/target rates, NOT futures-implied rates or meeting probabilities.",
   "stale_banks": []
 }
