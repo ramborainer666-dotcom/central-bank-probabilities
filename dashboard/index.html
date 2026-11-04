@@ -34,6 +34,7 @@ a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color
 </div>
 <section class="panel"><h2>Historische Hike-Wahrscheinlichkeit (kumuliert, für gleiches Meeting-Datum)</h2>
 <canvas id="historyChart" role="img" aria-label="Historische Wahrscheinlichkeiten"></canvas><p><small>Nur echte gespeicherte Änderungen. Die Zeitreihe bleibt an ein konkretes Meeting-Datum gebunden, auch wenn Sitzungen vorrücken.</small></p></section>
+<section class="panel"><h2>Eigene Futures-Berechnung · getrennte Modellwerte</h2><div id="modeldata" class="muted"><p>Noch keine autorisierten Futureskurse eingespeist.</p></div><p><small>Diese Werte sind modellierte Wahrscheinlichkeiten (Hold vs. genau ein 25-bp-Hike/Cut). Sie werden nicht mit den Wahrscheinlichkeiten von centralbank.watch vermischt.</small></p></section>
 <section class="panel"><h2>Transparenz der Datenquellen</h2><div id="sourceInfo" class="muted"></div></section>
 </main>
 <script>
@@ -131,6 +132,18 @@ document.querySelectorAll('[data-meeting]').forEach(b=>b.onclick=()=>{meeting=+b
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;setActive('mode',mode);render()});
 document.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{pathMode=b.dataset.path;setActive('path',pathMode);render()});
 window.addEventListener('resize',()=>{renderPath();renderHistory()});
+
+async function loadModel(){
+ try{
+ const r=await fetch('../data/model_latest.json',{cache:'no-store'});
+ if(!r.ok)throw Error('no model file');
+ const d=await r.json();const rows=d.records||[];
+ if(!rows.length){$('#modeldata').innerHTML='<p>Keine autorisierten Futureskurse vorhanden. Die Engine ist installiert, aber noch ohne Live-Daten.</p>';return}
+ $('#modeldata').innerHTML='<table><tr><th>Bank</th><th>Meeting</th><th>Erwartung</th><th>Hike</th><th>Hold</th><th>Cut</th><th>Quelle</th></tr>'+rows.map(x=>'<tr><td>'+esc(x.bank)+'</td><td>'+date(x.meeting_date)+'</td><td>'+bp(x.expected_move_bps)+'</td><td>'+pct(x.model_probabilities_pct?.hike)+'</td><td>'+pct(x.model_probabilities_pct?.hold)+'</td><td>'+pct(x.model_probabilities_pct?.cut)+'</td><td>'+esc(x.source)+'</td></tr>').join('')+'</table>';
+ }catch(e){$('#modeldata').textContent='Eigene Modellwerte momentan nicht verfügbar.'}
+}
+loadModel();
+
 Promise.all([fetch('../data/latest.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('latest.json HTTP '+r.status);return r.json()}),fetch('../data/history.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('history.json HTTP '+r.status);return r.json()})])
 .then(([l,h])=>{latest=l;history=h;$('#status').textContent=(l.records||[]).length?'Daten: '+(l.retrieved_at||'Zeit unbekannt'):'Noch keine Live-Daten. GitHub Actions → Test and collect → Run workflow.';render()})
 .catch(e=>{$('#status').textContent='Daten konnten nicht geladen werden: '+e.message;render()});
