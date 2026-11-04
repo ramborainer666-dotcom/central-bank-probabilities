@@ -13,7 +13,7 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
-BOC_URL = "https://www.bankofcanada.ca/valet/observations/CORRA/json?recent=10"
+BOC_URL = "https://www.bankofcanada.ca/valet/observations/AVG.INTWO/json?recent=10"
 RBA_URL = "https://www.rba.gov.au/cash-rate-target-overview.html"
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "official_reference_latest.json"
@@ -26,7 +26,7 @@ def parse_corra(response: dict) -> dict:
     for row in observations:
         try:
             d=date.fromisoformat(row["d"])
-            value=float(row["CORRA"]["v"])
+            value=float(row["AVG.INTWO"]["v"])
             if not -5 <= value <= 30:
                 raise ValueError("CORRA outside plausible range")
             valid.append((d,value))
