@@ -1,0 +1,30 @@
+{
+  "_description": "Template only – NOT LIVE QUOTES. Supply authorized quote, observation date and official overnight rate before running the model.",
+  "status": "template_no_live_prices",
+  "quotes": [
+    {
+      "bank": "RBA",
+      "source": "AUTHORIZED_SOURCE_REQUIRED",
+      "observed_at_utc": null,
+      "year": 2026,
+      "month": 12,
+      "meeting_effective": "2026-12-09",
+      "future_price": null,
+      "current_policy_rate_pct": null,
+      "current_reference_rate_pct": null,
+      "contract": "arithmetic"
+    },
+    {
+      "bank": "BOC",
+      "source": "AUTHORIZED_SOURCE_REQUIRED",
+      "observed_at_utc": null,
+      "year": 2026,
+      "month": 12,
+      "meeting_effective": "2026-12-10",
+      "future_price": null,
+      "current_policy_rate_pct": null,
+      "current_reference_rate_pct": null,
+      "contract": "corra_compounded"
+    }
+  ]
+}
