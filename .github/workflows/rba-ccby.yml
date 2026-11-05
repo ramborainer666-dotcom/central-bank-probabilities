@@ -30,7 +30,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/rba_external_model_latest.json
+          git add data/rba_external_model_latest.json data/rba_external_model_history.json
           if ! git diff --cached --quiet; then
             git commit -m "data: RBA Rate Watch CC-BY model snapshot"
             git push
