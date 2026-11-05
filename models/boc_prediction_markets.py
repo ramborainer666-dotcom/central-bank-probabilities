@@ -13,6 +13,7 @@ import requests
 
 ROOT=Path(__file__).resolve().parents[1]
 OUTPUT=ROOT/"data/boc_prediction_market_latest.json"
+HISTORY=ROOT/"data/boc_prediction_market_history.json"
 EVENTS=[
  ("bank-of-canada-decision-in-december-20260908230600011","2026-12-09"),
  ("bank-of-canada-decision-in-january-2027","2027-01-27"),
@@ -99,17 +100,50 @@ def fetch():
             "status":"ok" if rows and not errors else "partial" if rows else "unavailable"}
 
 def save(doc: dict):
+    """Store the latest valid observations and an append-only change history.
+
+    Each history row is keyed by source, bank and meeting_date. A repeated
+    quote with a new retrieval time does not create a false market change.
+    """
     if not doc["records"]:
         print(f"No reliable BoC markets: {doc['errors']}")
         return
     OUTPUT.parent.mkdir(parents=True,exist_ok=True)
     previous=json.loads(OUTPUT.read_text(encoding="utf-8")) if OUTPUT.exists() else {}
+    hist=json.loads(HISTORY.read_text(encoding="utf-8")) if HISTORY.exists() else []
+    if not isinstance(hist,list):
+        raise ValueError("BoC history must be a list")
+    last={}
+    for r in hist:
+        if r.get("source_type")=="prediction_market":
+            last[r["meeting_date"]]=r
+    added=0
+    for r in sorted(doc["records"],key=lambda x:x["meeting_date"]):
+        key=r["meeting_date"]
+        previous_row=last.get(key)
+        if previous_row is None:
+            previous_row=next((x for x in previous.get("records",[]) if x["meeting_date"]==key),None)
+        changed=(previous_row is None or
+                 previous_row["probabilities_pct"]!=r["probabilities_pct"] or
+                 previous_row.get("raw_sum_pct")!=r["raw_sum_pct"])
+        if changed:
+            entry={
+                "bank":"BOC","meeting_date":key,
+                "source_type":"prediction_market","source":"Polymarket public Gamma API",
+                "retrieved_at":doc["retrieved_at"],
+                "probabilities_pct":r["probabilities_pct"],
+                "raw_sum_pct":r["raw_sum_pct"],
+                "source_url":r["source_url"]
+            }
+            hist.append(entry)
+            last[key]=entry
+            added+=1
     def fingerprint(d):
         return [(r["meeting_date"],r["probabilities_pct"],r["raw_sum_pct"]) for r in d.get("records",[])]
-    if fingerprint(previous)==fingerprint(doc) and previous.get("errors")==doc["errors"]:
-        print("No new market prices")
-        return
-    OUTPUT.write_text(json.dumps(doc,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"Stored {len(doc['records'])} BoC market odds")
+    if added:
+        HISTORY.write_text(json.dumps(hist,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    if fingerprint(previous)!=fingerprint(doc) or previous.get("errors")!=doc["errors"]:
+        OUTPUT.write_text(json.dumps(doc,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"BoC: {len(doc['records'])} meeting odds, {added} historical changes")
 if __name__=="__main__":
     save(fetch())
