@@ -46,36 +46,92 @@ a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color
 const BANKS=['FED','ECB','BOE','BOC','RBA','RBNZ','BOJ','SNB'];
 const COLORS={FED:'#FFC000',ECB:'#7030A0',BOE:'#FF0000',BOC:'#70AD47',RBA:'#ED7D31',RBNZ:'#9900CC',BOJ:'#FFFF00',SNB:'#00B0F0'};
 let latest={records:[],errors:{}},history=[],bank='FED',meeting=0,mode='cumulative',pathMode='all';
+let externalBOC=null,externalRBA=null,bocHistory=[],rbaHistory=[];
+function freshTimestamp(timestamp,hours){
+ const delta=Date.now()-Date.parse(timestamp||'');
+ return Number.isFinite(delta)&&delta>=-600000&&delta<=hours*3600000;
+}
+function externalReady(b){
+ if(b==='BOC')return externalBOC?.records?.length&&freshTimestamp(externalBOC.retrieved_at,48);
+ if(b==='RBA')return externalRBA?.records?.length&&freshTimestamp(externalRBA.source_asof_utc,72);
+ return false;
+}
+function rowsFor(b){
+ if(b==='BOC')return externalReady(b)?grp(externalBOC.records,b):[];
+ if(b==='RBA')return externalReady(b)?grp(externalRBA.records,b):[];
+ return grp(latest.records||[],b);
+}
+function sourceFor(b){
+ return b==='BOC'?'Polymarket · Prognosemarkt':b==='RBA'?'RBA Rate Watch · Futures-Modell':'Central Bank Watch · kumuliert';
+}
+function odds(r,b){
+ if(!r)return null;
+ if(b==='BOC'||b==='RBA')return r.probabilities_pct;
+ const x=r.cumulative;return x?{hike:x.higher,hold:x.same,cut:x.lower}:null;
+}
+function rowTimestamp(r,b){
+ return b==='BOC'?externalBOC?.retrieved_at:b==='RBA'?externalRBA?.source_asof_utc:r?.retrieved_at;
+}
+function historyFor(b,meetingDate){
+ const all=b==='BOC'?bocHistory:b==='RBA'?rbaHistory:history;
+ return all.filter(x=>x.bank===b&&x.meeting_date===meetingDate)
+   .sort((a,c)=>Date.parse(a.source_asof_utc||a.retrieved_at)-Date.parse(c.source_asof_utc||c.retrieved_at));
+}
+
 const $=s=>document.querySelector(s),fmt=(x,n=1)=>typeof x==='number'?x.toFixed(n).replace('.',','):'k. A.',pct=x=>fmt(x)+' %',bp=x=>(typeof x==='number'?(x>=0?'+':'')+fmt(x)+' bp':'k. A.');
 const grp=(rows,b)=>rows.filter(r=>r.bank===b).sort((a,c)=>a.meeting_date.localeCompare(c.meeting_date));
-const selected=()=>grp(latest.records||[],bank)[meeting];
+const selected=()=>rowsFor(bank)[meeting];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const date=s=>s?new Date(s+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'}):'–';
 function setActive(attr,value){document.querySelectorAll('[data-'+attr+']').forEach(b=>b.classList.toggle('selected',b.dataset[attr]===String(value)))}
 function renderCards(){
- const box=$('#banks');box.innerHTML=BANKS.map(b=>{
- const r=grp(latest.records||[],b)[meeting];const stale=(latest.stale_banks||[]).includes(b);const c=r?.cumulative,values=c?[c.higher,c.same,c.lower]:[0,0,0];
- return '<button class="bank '+(bank===b?'active':'')+'" style="--bank:'+COLORS[b]+'" data-bank="'+b+'"><header><span class="dot"></span><strong>'+b+'</strong><small>'+date(r?.meeting_date)+'</small></header>'+
- (r?'<div class="bar">'+values.map((v,i)=>'<i style="width:'+Math.max(0,v)+'%;background:'+['var(--hike)','var(--hold)','var(--cut)'][i]+'"></i>').join('')+'</div><div class="stats"><span>Hike '+pct(c.higher)+'</span><span>Hold '+pct(c.same)+'</span><span>Cut '+pct(c.lower)+'</span></div><div class="small">Δ Zinspfad: '+bp(r.incremental_expected_bps)+(stale?' · ⚠ VERALTETER STAND':'')+'</div>':'<div class="empty">Keine validierten Daten</div>')+'</button>'
+ const box=$('#banks');
+ box.innerHTML=BANKS.map(b=>{
+  const r=rowsFor(b)[meeting],p=odds(r,b);
+  const stale=(latest.stale_banks||[]).includes(b);
+  const rawTotal=p?p.hike+p.hold+p.cut:0;
+  const values=p?[p.hike,p.hold,p.cut]:[0,0,0];
+  const source=sourceFor(b);
+  const detail=b==='BOC'
+   ?'Prognosemarkt · kein CORRA-Zinspfad'
+   :b==='RBA'?'Erwartung: '+bp(r?.expected_move_bps)+' · futuresbasiertes Modell'
+   :'Δ Zinspfad: '+bp(r?.incremental_expected_bps)+(stale?' · ⚠ VERALTETER STAND':'');
+  return '<button class="bank '+(bank===b?'active':'')+'" style="--bank:'+COLORS[b]+'" data-bank="'+b+'"><header><span class="dot"></span><strong>'+b+'</strong><small>'+date(r?.meeting_date)+'</small></header>'+
+   (r&&p?'<div class="bar">'+values.map((v,i)=>'<i style="width:'+(rawTotal?100*v/rawTotal:0)+'%;background:'+['var(--hike)','var(--hold)','var(--cut)'][i]+'"></i>').join('')+'</div><div class="stats"><span>Hike '+pct(p.hike)+'</span><span>Hold '+pct(p.hold)+'</span><span>Cut '+pct(p.cut)+'</span></div><div class="small">'+esc(source)+' · '+detail+'</div>':
+    '<div class="empty">'+(b==='BOC'||b==='RBA'?'Keine aktuellen validierten Daten':'Keine validierten Daten')+'</div>')+'</button>';
  }).join('');
  box.querySelectorAll('[data-bank]').forEach(b=>b.onclick=()=>{bank=b.dataset.bank;render()});
 }
 function renderDetail(){
- const r=selected();$('#detailtitle').textContent=bank+' · '+(meeting+1)+'. Meeting '+date(r?.meeting_date);
- if(!r){$('#detail').innerHTML='<div class="empty">Keine Daten für dieses Meeting</div>';return}
- if(mode==='incremental'){
- $('#detail').innerHTML='<p><strong>Neue Bewegung an diesem Meeting:</strong> '+pct(r.move_probability_pct)+' ('+esc(r.move_direction)+')</p><p>Erwartete zusätzliche Zinsänderung: <strong>'+bp(r.incremental_expected_bps)+'</strong></p><p class="warn">Eine vollständige isolierte Hike/Hold/Cut-Verteilung ist in dieser Quelle nicht vorhanden. Sie wird nicht aus kumulierten Prozenten abgeleitet.</p>';
- }else{
- const c=r.cumulative;$('#detail').innerHTML=[['Hike',c.higher,'var(--hike)'],['Hold',c.same,'var(--hold)'],['Cut',c.lower,'var(--cut)']].map(([k,v,color])=>'<div style="margin:14px 0"><div class="row"><strong>'+k+'</strong><span>'+pct(v)+'</span></div><div class="bar"><i style="background:'+color+';width:'+v+'%"></i></div></div>').join('')+'<p>Implizierter Zins: <strong>'+pct(r.implied_rate_pct)+'</strong></p><small>Diese Chancen beziehen sich kumuliert auf das heutige Zinsniveau.</small>';
+ const r=selected(),p=odds(r,bank);
+ $('#detailtitle').textContent=bank+' · '+(meeting+1)+'. Meeting '+date(r?.meeting_date);
+ if(!r||!p){$('#detail').innerHTML='<div class="empty">Keine aktuellen Daten für dieses Meeting</div>';return}
+ let out='<p><strong>Quelle:</strong> '+esc(sourceFor(bank))+'</p>';
+ if(bank==='BOC'||bank==='RBA'){
+  out+=[['Hike',p.hike,'var(--hike)'],['Hold',p.hold,'var(--hold)'],['Cut',p.cut,'var(--cut)']]
+    .map(([k,v,color])=>'<div style="margin:14px 0"><div class="row"><strong>'+k+'</strong><span>'+pct(v)+'</span></div><div class="bar"><i style="background:'+color+';width:'+Math.max(0,Math.min(100,v))+'%"></i></div></div>').join('');
+  if(bank==='BOC')out+='<p>Preissumme: '+pct(r.raw_sum_pct)+' (nicht auf 100 % normiert). Keine futuresbasierte Rate.</p><p><small>Polymarket-YES-Preise; Handelskosten, Spread und Liquidität können die Summe beeinflussen. Abruf: '+esc(rowTimestamp(r,bank))+'</small></p>';
+  else out+='<p>Implizierter Modellzins: <strong>'+pct(r.implied_rate_pct)+'</strong> · Erwarteter zusätzlicher Schritt: <strong>'+bp(r.expected_move_bps)+'</strong></p><p><small>RBA Rate Watch, CC BY 4.0. Quellstand: '+esc(rowTimestamp(r,bank))+'. Fünf mögliche Zinsschritte werden zu Hike/Hold/Cut zusammengefasst.</small></p>';
+  $('#detail').innerHTML=out;return;
  }
+ if(mode==='incremental'){
+   out+='<p><strong>Neue Bewegung an diesem Meeting:</strong> '+pct(r.move_probability_pct)+' ('+esc(r.move_direction)+')</p><p>Erwartete zusätzliche Zinsänderung: <strong>'+bp(r.incremental_expected_bps)+'</strong></p><p class="warn">Eine isolierte Hike/Hold/Cut-Verteilung liegt für diese Quelle nicht vor.</p>';
+ }else{
+  out+=[['Hike',p.hike,'var(--hike)'],['Hold',p.hold,'var(--hold)'],['Cut',p.cut,'var(--cut)']].map(([k,v,color])=>'<div style="margin:14px 0"><div class="row"><strong>'+k+'</strong><span>'+pct(v)+'</span></div><div class="bar"><i style="background:'+color+';width:'+v+'%"></i></div></div>').join('')+'<p>Implizierter Zins: <strong>'+pct(r.implied_rate_pct)+'</strong></p><small>Kumuliert gegenüber dem aktuellen Zinsniveau; nicht isolierte Sitzungswahrscheinlichkeiten.</small>';
+ }
+ $('#detail').innerHTML=out;
 }
 function renderDeltas(){
- const r=selected();if(!r){$('#deltas').innerHTML='<div class="empty">Keine Werte</div>';return}
- const prior=history.filter(x=>x.bank===bank&&x.meeting_date===r.meeting_date).sort((a,b)=>a.retrieved_at.localeCompare(b.retrieved_at));
- const old=prior.length>1?prior[prior.length-2]:null;
- if(!old){$('#deltas').innerHTML='<div class="empty">Noch kein früherer abweichender Snapshot für dieses Meeting vorhanden.</div>';return}
- const d=(x,y)=>typeof x==='number'&&typeof y==='number'?(x-y>=0?'+':'')+fmt(x-y)+' pp':'k. A.';
- $('#deltas').innerHTML='<table><tr><th>Merkmal</th><th>Aktuell</th><th>Änderung</th></tr>'+['higher','same','lower'].map(k=>'<tr><td>'+({higher:'Hike',same:'Hold',lower:'Cut'}[k])+'</td><td>'+pct(r.cumulative[k])+'</td><td>'+d(r.cumulative[k],old.cumulative[k])+'</td></tr>').join('')+'</table><p><small>Vorheriger geänderter Datensatz: '+esc(old.retrieved_at)+'</small></p>';
+ const r=selected(),p=odds(r,bank);
+ if(!r||!p){$('#deltas').innerHTML='<div class="empty">Keine aktuellen Daten</div>';return}
+ const rows=historyFor(bank,r.meeting_date);
+ if(rows.length<2){$('#deltas').innerHTML='<div class="empty">Noch keine zwei unterschiedlichen Snapshots für dieses Meeting vorhanden.</div>';return}
+ const previous=rows[rows.length-2],q=odds(previous,bank);
+ if(!q){$('#deltas').innerHTML='<div class="empty">Vorherige Quelle nicht vergleichbar.</div>';return}
+ const diff=(a,b)=>typeof a==='number'&&typeof b==='number'?(a-b>=0?'+':'')+fmt(a-b)+' pp':'k. A.';
+ $('#deltas').innerHTML='<p><small>Gleiches Meeting '+date(r.meeting_date)+' · '+esc(sourceFor(bank))+'</small></p><table><tr><th>Ausgang</th><th>Aktuell</th><th>Veränderung</th></tr>'+
+  [['Hike','hike'],['Hold','hold'],['Cut','cut']].map(([label,key])=>'<tr><td>'+label+'</td><td>'+pct(p[key])+'</td><td>'+diff(p[key],q[key])+'</td></tr>').join('')+
+  '</table><p><small>Vorheriger geänderter Snapshot: '+esc(previous.source_asof_utc||previous.retrieved_at)+'</small></p>';
 }
 function plot(canvas,series,{minY=null,maxY=null,suffix='',empty='Keine Daten'}={}){
  const ratio=window.devicePixelRatio||1;const w=canvas.clientWidth||700,h=330;
@@ -96,36 +152,42 @@ function plot(canvas,series,{minY=null,maxY=null,suffix='',empty='Keine Daten'}=
  for(const p of ps){g.fillStyle=s.color;g.beginPath();g.arc(X(p.x),Y(p.y),2.6,0,2*Math.PI);g.fill()}}
 }
 function renderPath(){
- const lines=[],leaders=[];
+ const lines=[];
+ const baseDate=Date.parse(new Date().toISOString().slice(0,10)+'T00:00:00Z');
  for(const b of BANKS){
- const rows=grp(latest.records||[],b).slice(0,pathMode==='two'?2:9);
- if(!rows.length)continue;
- const base=rows[0].implied_rate_pct-rows[0].incremental_expected_bps/100;
- const points=rows.map(r=>({x:Date.parse(r.meeting_date+'T00:00:00Z'),y:(r.implied_rate_pct-base)*100}));
- const current=Date.parse((latest.retrieved_at||new Date().toISOString()).slice(0,10)+'T00:00:00Z');
- lines.push({name:b,color:COLORS[b],points:[{x:current,y:0},...points]});
- if(rows.length===(pathMode==='two'?2:9))leaders.push({bank:b,delta:points.at(-1).y});
+  if(b==='BOC')continue; // prediction market supplies no rate curve
+  const rows=rowsFor(b).slice(0,pathMode==='two'?2:9);
+  if(!rows.length)continue;
+  const base=rows[0].implied_rate_pct-(b==='RBA'?rows[0].expected_move_bps:rows[0].incremental_expected_bps)/100;
+  if(!Number.isFinite(base))continue;
+  const points=rows.map(r=>({x:Date.parse(r.meeting_date+'T00:00:00Z'),y:(r.implied_rate_pct-base)*100}));
+  lines.push({name:b,color:COLORS[b],points:[{x:baseDate,y:0},...points]});
  }
  plot($('#path'),lines,{suffix:'bp'});
- $('#legend').innerHTML=lines.map(x=>'<span><i class="swatch" style="background:'+x.color+'"></i>'+x.name+'</span>').join('');
- // Ranking am gemeinsamen Kalender-Stichtag, keine Extrapolation nach der letzten vorliegenden Sitzung.
- const active = BANKS.map(b=>({bank:b,rows:grp(latest.records||[],b)})).filter(x=>x.rows.length);
- if(active.length<2){$('#leader').textContent='Kalendergleicher Vergleich noch nicht möglich (zu wenig Banken mit Daten).';return}
- const horizon = active.map(x=>x.rows.at(-1).meeting_date).sort()[0];
- const rank = active.map(x=>{
-   const valid=x.rows.filter(r=>r.meeting_date<=horizon);
-   if(!valid.length)return null;
-   const currentRate=x.rows[0].implied_rate_pct-x.rows[0].incremental_expected_bps/100;
-   return {bank:x.bank,delta:(valid.at(-1).implied_rate_pct-currentRate)*100};
- }).filter(Boolean).sort((a,b)=>b.delta-a.delta);
- if(!rank.length){$('#leader').textContent='Noch keine vergleichbaren Zinspfade.';return}
- const hi=rank[0],lo=rank.at(-1);
- $('#leader').textContent='Gemeinsamer Stichtag '+date(horizon)+': stärkste eingepreiste Straffung '+hi.bank+' ('+bp(hi.delta)+'), stärkste Lockerung / geringste Straffung '+lo.bank+' ('+bp(lo.delta)+'). Basis: letzter bekannter Sitzungssatz bis zum Stichtag, kein interpolierter Marktpreis. Verglichene Banken: '+rank.length+'/'+BANKS.length+'.';
+ $('#legend').innerHTML=lines.map(x=>'<span><i class="swatch" style="background:'+x.color+'"></i>'+x.name+(x.name==='RBA'?' (Modell)':'')+'</span>').join('');
+ const eligible=lines.map(line=>{
+  const rows=rowsFor(line.name);return {bank:line.name,rows}
+ }).filter(x=>x.rows.length>=2);
+ if(eligible.length<2){$('#leader').textContent='Noch zu wenige vergleichbare Zinspfade.';return}
+ const horizon=eligible.map(x=>x.rows.at(-1).meeting_date).sort()[0];
+ const ranked=eligible.map(x=>{
+  const within=x.rows.filter(r=>r.meeting_date<=horizon);
+  if(!within.length)return null;
+  const first=x.rows[0],delta= x.bank==='RBA'?first.expected_move_bps:first.incremental_expected_bps;
+  const base=first.implied_rate_pct-delta/100;
+  return {bank:x.bank,bps:(within.at(-1).implied_rate_pct-base)*100}
+ }).filter(Boolean).sort((a,b)=>b.bps-a.bps);
+ if(!ranked.length){$('#leader').textContent='Keine vergleichbaren Punkte.';return}
+ $('#leader').textContent='Gemeinsamer Datenhorizont '+date(horizon)+': stärkste Straffung '+ranked[0].bank+' ('+bp(ranked[0].bps)+'), geringste Straffung / stärkste Lockerung '+ranked.at(-1).bank+' ('+bp(ranked.at(-1).bps)+'). BoC ausgenommen: Polymarket liefert keine Zinspfadpreise. RBA verwendet ein separates Futures-Modell.';
 }
 function renderHistory(){
- const r=selected();if(!r){plot($('#historyChart'),[],{});return}
- const rows=history.filter(x=>x.bank===bank&&x.meeting_date===r.meeting_date).sort((a,b)=>a.retrieved_at.localeCompare(b.retrieved_at));
- plot($('#historyChart'),[{color:COLORS[bank],points:rows.map(x=>({x:Date.parse(x.retrieved_at),y:x.cumulative?.higher}))}],{minY:0,maxY:100,suffix:'%'});
+ const r=selected();
+ const title=$('#historyChart').parentElement.querySelector('h2');
+ title.textContent='Historische Hike-Wahrscheinlichkeit · '+esc(sourceFor(bank))+' · gleiches Meeting';
+ if(!r){plot($('#historyChart'),[],{});return}
+ const rows=historyFor(bank,r.meeting_date);
+ const series=rows.map(x=>({x:Date.parse(x.source_asof_utc||x.retrieved_at),y:odds(x,bank)?.hike}));
+ plot($('#historyChart'),[{color:COLORS[bank],points:series}],{minY:0,maxY:100,suffix:'%'});
 }
 function renderSources(){
  const errors=latest.errors||{};$('#sourceInfo').innerHTML='<p>Letzter Abruf: '+esc(latest.retrieved_at||'noch nicht erfolgt')+'. <strong>Abrufzeit ≠ bestätigte Zeit des Marktdaten-Updates.</strong></p>'+
@@ -190,6 +252,16 @@ async function loadModel(){
  }catch(e){$('#modeldata').textContent='Eigene Modellwerte momentan nicht verfügbar.'}
 }
 loadModel();
+
+Promise.all([
+ fetch('../data/boc_prediction_market_latest.json',{cache:'no-store'}).then(r=>r.json()),
+ fetch('../data/boc_prediction_market_history.json',{cache:'no-store'}).then(r=>r.json()),
+ fetch('../data/rba_external_model_latest.json',{cache:'no-store'}).then(r=>r.json()),
+ fetch('../data/rba_external_model_history.json',{cache:'no-store'}).then(r=>r.json())
+]).then(([b,bh,a,ah])=>{
+ externalBOC=b;externalRBA=a;bocHistory=Array.isArray(bh)?bh:[];rbaHistory=Array.isArray(ah)?ah:[];
+ render();
+}).catch(e=>{console.warn('Secondary bank sources unavailable',e);render()});
 
 Promise.all([fetch('../data/latest.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('latest.json HTTP '+r.status);return r.json()}),fetch('../data/history.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('history.json HTTP '+r.status);return r.json()})])
 .then(([l,h])=>{latest=l;history=h;$('#status').textContent=(l.records||[]).length?'Daten: '+(l.retrieved_at||'Zeit unbekannt'):'Noch keine Live-Daten. GitHub Actions → Test and collect → Run workflow.';render()})
