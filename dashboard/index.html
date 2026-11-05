@@ -20,7 +20,17 @@ a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color
 /* Compact left bank rail and analytical main workspace */
 main{max-width:1600px}
 .workspace{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;align-items:start}
-.bank-sidebar{position:sticky;top:12px;min-width:0}
+.bank-sidebar{
+ position:sticky;top:12px;min-width:0;
+ max-height:calc(100vh - 24px);
+ overflow-y:auto;overflow-x:hidden;
+ overscroll-behavior-y:contain;
+ scrollbar-width:thin;scrollbar-color:#4b6686 transparent;
+ padding-right:5px;
+}
+.bank-sidebar::-webkit-scrollbar{width:7px}
+.bank-sidebar::-webkit-scrollbar-thumb{background:#4b6686;border-radius:6px}
+.bank-sidebar::-webkit-scrollbar-track{background:transparent}
 .bank-sidebar h2{margin:0 0 12px;font-size:14px}
 .bank-sidebar .grid{display:flex;flex-direction:column;gap:9px}
 .bank-sidebar .bank{width:100%;padding:12px 13px}
@@ -41,7 +51,7 @@ main{max-width:1600px}
 .path-panel{width:60%;max-width:100%;min-width:0}
 .path-panel canvas{height:320px}
 @media(max-width:1100px){.workspace{grid-template-columns:190px minmax(0,1fr)}.path-panel{width:75%}}
-@media(max-width:800px){.workspace{grid-template-columns:1fr}.bank-sidebar{position:static}.bank-sidebar .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.path-panel{width:100%}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.bank-sidebar{position:static;max-height:45vh}.bank-sidebar .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.path-panel{width:100%}}
 @media(max-width:520px){.bank-sidebar .grid{grid-template-columns:1fr}}
 
 </style></head>
@@ -91,7 +101,7 @@ main{max-width:1600px}
 </main>
 <script>
 const BANKS=['FED','ECB','BOE','BOC','RBA','RBNZ','BOJ','SNB'];
-const COLORS={FED:'#FFC000',ECB:'#7030A0',BOE:'#FF0000',BOC:'#70AD47',RBA:'#ED7D31',RBNZ:'#9900CC',BOJ:'#FFFF00',SNB:'#00B0F0'};
+const COLORS={FED:'#3B82D6',ECB:'#7030A0',BOE:'#FF0000',BOC:'#70AD47',RBA:'#ED7D31',RBNZ:'#9900CC',BOJ:'#FFFF00',SNB:'#00B0F0'};
 let latest={records:[],errors:{}},history=[],bank='FED',meeting=0,mode='cumulative',pathMode='all';
 let externalBOC=null,externalRBA=null,bocHistory=[],rbaHistory=[];
 let historyOffsetWeek=false,historyOffsetMonth=false;
