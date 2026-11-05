@@ -142,8 +142,10 @@ def save(doc: dict):
         return [(r["meeting_date"],r["probabilities_pct"],r["raw_sum_pct"]) for r in d.get("records",[])]
     if added:
         HISTORY.write_text(json.dumps(hist,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    if fingerprint(previous)!=fingerprint(doc) or previous.get("errors")!=doc["errors"]:
-        OUTPUT.write_text(json.dumps(doc,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    # Publish a fresh retrieval timestamp even when market prices do not move.
+    # Otherwise a successful but unchanged feed would appear stale after 48h.
+    # This does NOT append a false historical price change.
+    OUTPUT.write_text(json.dumps(doc,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(f"BoC: {len(doc['records'])} meeting odds, {added} historical changes")
 if __name__=="__main__":
     save(fetch())
