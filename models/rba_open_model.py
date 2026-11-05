@@ -16,6 +16,7 @@ METHOD = "https://rbaratewatch.com/methodology/"
 ROOT = Path(__file__).resolve().parents[1]
 OFFICIAL = ROOT / "data/official_reference_latest.json"
 OUTPUT = ROOT / "data/rba_external_model_latest.json"
+HISTORY = ROOT / "data/rba_external_model_history.json"
 
 def parse_rba_model(doc: dict, official_rate: float, now: datetime | None=None) -> dict:
     now=now or datetime.now(timezone.utc)
@@ -74,18 +75,54 @@ def load_official(path: Path=OFFICIAL) -> float:
         raise ValueError("Official RBA policy target observation is outdated")
     return float(target["rate_pct"])
 
+def persist(doc: dict, latest_path: Path=OUTPUT, history_path: Path=HISTORY) -> int:
+    """Append only changed, publisher-timestamped model snapshots.
+
+    Retain the publisher's as-of timestamp separately from when our script
+    retrieved the document. No artificial intraday observations are created.
+    """
+    latest_path.parent.mkdir(parents=True,exist_ok=True)
+    prior=json.loads(latest_path.read_text(encoding="utf-8")) if latest_path.exists() else {}
+    history=json.loads(history_path.read_text(encoding="utf-8")) if history_path.exists() else []
+    if not isinstance(history,list):
+        raise ValueError("RBA model history must be a list")
+    previous_by_date={r["meeting_date"]:r for r in prior.get("records",[])}
+    hist_last={}
+    for r in history:
+        if r.get("source_type")=="futures_model":
+            hist_last[r["meeting_date"]]=r
+    added=0
+    for row in doc["records"]:
+        key=row["meeting_date"]
+        old=hist_last.get(key) or previous_by_date.get(key)
+        if old is not None and old.get("probabilities_pct")==row["probabilities_pct"] and old.get("implied_rate_pct")==row["implied_rate_pct"]:
+            continue
+        entry={
+            "bank":"RBA","source_type":"futures_model",
+            "meeting_date":key,
+            "retrieved_at":doc["retrieved_at"],
+            "source_asof_utc":doc["source_asof_utc"],
+            "source":"RBA Rate Watch · CC BY 4.0",
+            "probabilities_pct":row["probabilities_pct"],
+            "implied_rate_pct":row["implied_rate_pct"],
+            "expected_move_bps":row["expected_move_bps"]
+        }
+        history.append(entry)
+        hist_last[key]=entry
+        added+=1
+    if added:
+        history_path.write_text(json.dumps(history,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    if prior.get("source_asof_utc")!=doc["source_asof_utc"] or added:
+        latest_path.write_text(json.dumps(doc,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    return added
+
 def run():
     rate=load_official()
     response=requests.get(SOURCE,timeout=20,headers={"User-Agent":"CentralBankProbabilityMonitor/0.5 (CC-BY attribution; public JSON)"})
     response.raise_for_status()
     parsed=parse_rba_model(response.json(),rate)
-    OUTPUT.parent.mkdir(parents=True,exist_ok=True)
-    old=json.loads(OUTPUT.read_text(encoding="utf-8")) if OUTPUT.exists() else {}
-    if old.get("source_asof_utc")==parsed["source_asof_utc"]:
-        print("RBA source unchanged; no commit")
-        return
-    OUTPUT.write_text(json.dumps(parsed,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"RBA publisher snapshot: {len(parsed['records'])} meetings, as-of {parsed['source_asof_utc']}")
+    added=persist(parsed)
+    print(f"RBA model: {len(parsed['records'])} meetings, {added} historical changes; source as-of {parsed['source_asof_utc']}")
 
 if __name__=="__main__":
     run()
