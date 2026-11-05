@@ -16,24 +16,70 @@ table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:11px 8px;
 a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color:var(--muted);text-align:center}
 @media(max-width:960px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.twocol{grid-template-columns:1fr}}
 @media(max-width:540px){.grid{grid-template-columns:1fr}header{padding:20px}main{padding:14px}h1{font-size:20px}.panel{padding:12px}}
+
+/* Compact left bank rail and analytical main workspace */
+main{max-width:1600px}
+.workspace{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;align-items:start}
+.bank-sidebar{position:sticky;top:12px;min-width:0}
+.bank-sidebar h2{margin:0 0 12px;font-size:14px}
+.bank-sidebar .grid{display:flex;flex-direction:column;gap:9px}
+.bank-sidebar .bank{width:100%;padding:12px 13px}
+.bank-sidebar .bank header{gap:7px}
+.bank-sidebar .bank header small{margin-left:auto;font-size:10px}
+.bank-sidebar .bank strong{font-size:15px}
+.bank-sidebar .bank .stats{gap:5px;font-size:10px}
+.bank-sidebar .bank .small{font-size:10px;line-height:1.4}
+.analysis-area{min-width:0}
+.analysis-area>.panel:first-child{margin-top:0}
+.meeting-selector{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.meeting-selector h2{margin:0}
+.history-panel .buttons{flex-shrink:0}
+.history-panel .history-note{font-size:12px;margin-top:10px}
+.history-legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.history-legend span{font-size:12px;color:var(--muted)}
+.history-legend i{width:18px;height:4px;display:inline-block;vertical-align:middle;margin-right:5px;border-radius:3px}
+.path-panel{width:60%;max-width:100%;min-width:0}
+.path-panel canvas{height:320px}
+@media(max-width:1100px){.workspace{grid-template-columns:190px minmax(0,1fr)}.path-panel{width:75%}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.bank-sidebar{position:static}.bank-sidebar .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.path-panel{width:100%}}
+@media(max-width:520px){.bank-sidebar .grid{grid-template-columns:1fr}}
+
 </style></head>
 <body>
 <header><h1>Central Bank Probability Monitor</h1><div id="status" class="muted">Lade Daten…</div></header>
 <main>
-<div class="row"><h2>Acht Zentralbanken · nächstes und übernächstes Meeting</h2>
-<div class="buttons"><button class="choice selected" data-meeting="0">Meeting 1</button><button class="choice" data-meeting="1">Meeting 2</button></div></div>
+<div class="workspace">
+<aside class="bank-sidebar" aria-label="Zentralbanken">
+<h2>Zentralbanken</h2>
 <div id="banks" class="grid"></div>
-<section class="panel"><div class="row"><h2>Implied Policy Rate Paths – relativ zur aktuellen Rate (bps)</h2>
+</aside>
+<div class="analysis-area">
+<div class="meeting-selector">
+<h2>Wahrscheinlichkeiten je Meeting</h2>
+<div class="buttons">
+<button class="choice selected" data-meeting="0">Meeting 1</button>
+<button class="choice" data-meeting="1">Meeting 2</button>
+<button class="choice" data-meeting="2">Meeting 3</button>
+</div></div>
+<section class="panel history-panel">
+<div class="row"><h2>Historische Hike-Wahrscheinlichkeit · gleiches Meeting</h2>
+<div class="buttons">
+<button class="choice" data-history-offset="7" aria-pressed="false">Vor 1 Woche</button>
+<button class="choice" data-history-offset="28" aria-pressed="false">Vor 4 Wochen</button>
+</div></div>
+<div id="historyLegend" class="history-legend"></div>
+<canvas id="historyChart" role="img" aria-label="Historische Wahrscheinlichkeiten mit optionalen zeitversetzten Vergleichskurven"></canvas>
+<p id="historyNote" class="history-note muted">Historische Werte werden nur aus gespeicherten Snapshots gebildet. Bei fehlender Historie werden keine Kurven erfunden.</p>
+</section>
+<section class="panel path-panel"><div class="row"><h2>Implied Policy Rate Paths – relativ zur aktuellen Rate (bps)</h2>
 <div class="buttons"><button class="choice selected" data-path="all">Alle Meetings</button><button class="choice" data-path="two">Nur 2 Meetings</button></div></div>
-<div id="leader" class="muted"></div><canvas id="path" role="img" aria-label="Vergleich erwarteter Zinsänderungen aller acht Zentralbanken"></canvas>
-<div class="legend" id="legend"></div><p><small>Linien basieren auf impliziten Zinssätzen der Quelle. Die einzelnen Banken haben unterschiedliche Sitzungstermine. Der Vergleich am rechten Endpunkt ist daher kein kalendergleicher Vergleich; einzelne fehlende Punkte werden nicht extrapoliert.</small></p></section>
+<div id="leader" class="muted"></div><canvas id="path" role="img" aria-label="Vergleich erwarteter Zinsänderungen der Zentralbanken"></canvas>
+<div class="legend" id="legend"></div><p><small>Linien zeigen implizite Zinspfade. BoC-Prognosemarktpreise liefern keinen Zinspfad. Ein gemeinsamer Datenhorizont ist nur näherungsweise vergleichbar.</small></p></section>
 <div class="twocol">
 <section class="panel"><div class="row"><h2 id="detailtitle">Wahrscheinlichkeiten</h2><div class="buttons"><button class="choice selected" data-mode="cumulative">Kumuliert</button><button class="choice" data-mode="incremental">Meeting isoliert</button></div></div>
 <div id="detail"></div></section>
 <section class="panel"><h2>Veränderung gegenüber dem letzten Snapshot</h2><div id="deltas"></div></section>
 </div>
-<section class="panel"><h2>Historische Hike-Wahrscheinlichkeit (kumuliert, für gleiches Meeting-Datum)</h2>
-<canvas id="historyChart" role="img" aria-label="Historische Wahrscheinlichkeiten"></canvas><p><small>Nur echte gespeicherte Änderungen. Die Zeitreihe bleibt an ein konkretes Meeting-Datum gebunden, auch wenn Sitzungen vorrücken.</small></p></section>
 <section class="panel"><h2>BoC · Prognosemarkt-Wahrscheinlichkeiten (Polymarket API)</h2><div id="bocMarketOdds" class="muted">Prüfe Marktdaten …</div><p><small>Separater Datenkanal: gehandelte Prognosemarktpreise über die offizielle öffentliche <a href="https://docs.polymarket.com/api-reference/events/get-event-by-slug" target="_blank" rel="noopener noreferrer">Gamma API</a>; keine CORRA-/OIS-basierten Zinserwartungen. Bei unvollständiger oder illiquider Preisstellung wird kein Wert ausgegeben.</small></p></section>
 <section class="panel"><h2>RBA · Open-Data-Wahrscheinlichkeiten (CC BY 4.0)</h2><div id="rbaOpenData" class="muted">Datenquelle wird geprüft …</div><p><small>Modellierte Wahrscheinlichkeiten von <a href="https://rbaratewatch.com/methodology/" target="_blank" rel="noopener noreferrer">RBA Rate Watch</a>, CC BY 4.0, kein TradingView-/Barchart-Scraping. Nur gültige neue Snapshots, getrennt von den bisherigen Central-Bank-Watch-Daten.</small></p></section>
 <section class="panel"><h2>Offizielle Referenzzinssätze · BOC / RBA</h2>
@@ -41,12 +87,14 @@ a{color:#93c5fd}#status{font-size:12px;padding-top:7px}.empty{padding:30px;color
 <p><small>Dies sind veröffentlichte aktuelle bzw. zuletzt verfügbare Zinsen, keine impliziten Erwartungen und keine Wahrscheinlichkeiten. Quelle und Gültigkeitsdatum werden getrennt ausgewiesen.</small></p></section>
 <section class="panel"><h2>Eigene Futures-Berechnung · getrennte Modellwerte</h2><div id="modeldata" class="muted"><p>Noch keine autorisierten Futureskurse eingespeist.</p></div><p><small>Diese Werte sind modellierte Wahrscheinlichkeiten (Hold vs. genau ein 25-bp-Hike/Cut). Sie werden nicht mit den Wahrscheinlichkeiten von centralbank.watch vermischt.</small></p></section>
 <section class="panel"><h2>Transparenz der Datenquellen</h2><div id="sourceInfo" class="muted"></div></section>
+</div></div>
 </main>
 <script>
 const BANKS=['FED','ECB','BOE','BOC','RBA','RBNZ','BOJ','SNB'];
 const COLORS={FED:'#FFC000',ECB:'#7030A0',BOE:'#FF0000',BOC:'#70AD47',RBA:'#ED7D31',RBNZ:'#9900CC',BOJ:'#FFFF00',SNB:'#00B0F0'};
 let latest={records:[],errors:{}},history=[],bank='FED',meeting=0,mode='cumulative',pathMode='all';
 let externalBOC=null,externalRBA=null,bocHistory=[],rbaHistory=[];
+let historyOffsetWeek=false,historyOffsetMonth=false;
 function freshTimestamp(timestamp,hours){
  const delta=Date.now()-Date.parse(timestamp||'');
  return Number.isFinite(delta)&&delta>=-600000&&delta<=hours*3600000;
@@ -148,8 +196,8 @@ function plot(canvas,series,{minY=null,maxY=null,suffix='',empty='Keine Daten'}=
  for(let i=0;i<=5;i++){const v=y0+(y1-y0)*i,y=Y(v);g.strokeStyle='#253243';g.beginPath();g.moveTo(left,y);g.lineTo(w-right,y);g.stroke();g.fillStyle='#8a9aaf';g.fillText(Math.round(v)+suffix,left-7,y+4)}
  for(let i=0;i<=4;i++){const x=x0+(x1-x0)*i;const dt=new Date(x);g.fillStyle='#8a9aaf';g.textAlign='center';g.fillText(dt.toLocaleDateString('de-DE',{month:'short',year:'2-digit'}),X(x),h-13)}
  for(const s of series){const ps=s.points.filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)).sort((a,b)=>a.x-b.x);if(!ps.length)continue;
- g.strokeStyle=s.color;g.lineWidth=2.3;g.beginPath();ps.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.stroke();
- for(const p of ps){g.fillStyle=s.color;g.beginPath();g.arc(X(p.x),Y(p.y),2.6,0,2*Math.PI);g.fill()}}
+ g.strokeStyle=s.color;g.globalAlpha=s.alpha??1;g.lineWidth=s.lineWidth??2.3;g.beginPath();ps.forEach((p,i)=>i?g.lineTo(X(p.x),Y(p.y)):g.moveTo(X(p.x),Y(p.y)));g.stroke();
+ for(const p of ps){g.fillStyle=s.color;g.beginPath();g.arc(X(p.x),Y(p.y),s.alpha===undefined?2.6:1.8,0,2*Math.PI);g.fill()}g.globalAlpha=1}
 }
 function renderPath(){
  const lines=[];
@@ -183,11 +231,37 @@ function renderPath(){
 function renderHistory(){
  const r=selected();
  const title=$('#historyChart').parentElement.querySelector('h2');
- title.textContent='Historische Hike-Wahrscheinlichkeit · '+esc(sourceFor(bank))+' · gleiches Meeting';
- if(!r){plot($('#historyChart'),[],{});return}
+ title.textContent='Historische Hike-Wahrscheinlichkeit · '+sourceFor(bank)+' · gleiches Meeting';
+ const legend=$('#historyLegend'),note=$('#historyNote');
+ if(!r){legend.innerHTML='';note.textContent='Keine Daten für das ausgewählte Meeting.';plot($('#historyChart'),[],{});return}
  const rows=historyFor(bank,r.meeting_date);
- const series=rows.map(x=>({x:Date.parse(x.source_asof_utc||x.retrieved_at),y:odds(x,bank)?.hike}));
- plot($('#historyChart'),[{color:COLORS[bank],points:series}],{minY:0,maxY:100,suffix:'%'});
+ const points=rows.map(x=>({x:Date.parse(x.source_asof_utc||x.retrieved_at),y:odds(x,bank)?.hike}))
+    .filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
+ const current={color:COLORS[bank],points};
+ const overlays=[];
+ const descriptions=[];
+ for(const [enabled,days,opacity,label] of [
+    [historyOffsetWeek,7,0.45,'Vor 1 Woche'],
+    [historyOffsetMonth,28,0.23,'Vor 4 Wochen']
+ ]){
+    if(!enabled)continue;
+    const shift=days*86400000;
+    // A point at display time t uses only a genuinely observed point at t-days.
+    // An earlier snapshot is plotted at t=observed_at+days, not synthesized.
+    const shifted=points.filter(p=>p.x+shift<=Date.now())
+                        .map(p=>({x:p.x+shift,y:p.y}));
+    if(shifted.length){
+      overlays.push({color:COLORS[bank],points:shifted,alpha:opacity,lineWidth:2});
+      descriptions.push(label+' (historische Daten um '+days+' Tage nach rechts versetzt)');
+    }else{
+      descriptions.push(label+': noch keine mindestens '+days+' Tage alten Snapshots');
+    }
+ }
+ plot($('#historyChart'),[current,...overlays],{minY:0,maxY:100,suffix:'%'});
+ legend.innerHTML='<span><i style="background:'+COLORS[bank]+'"></i>Aktuelle Historie</span>'+
+   (historyOffsetWeek?'<span><i style="background:'+COLORS[bank]+';opacity:.45"></i>Vor 1 Woche</span>':'')+
+   (historyOffsetMonth?'<span><i style="background:'+COLORS[bank]+';opacity:.23"></i>Vor 4 Wochen</span>':'');
+ note.textContent='Vergleich derselben Sitzung ('+date(r.meeting_date)+'). Transparente Linien zeigen ausschließlich gespeicherte ältere Beobachtungen auf einer um 7 bzw. 28 Tage verschobenen Zeitachse. Keine Schätzung. '+descriptions.join(' · ');
 }
 function renderSources(){
  const errors=latest.errors||{};$('#sourceInfo').innerHTML='<p>Letzter Abruf: '+esc(latest.retrieved_at||'noch nicht erfolgt')+'. <strong>Abrufzeit ≠ bestätigte Zeit des Marktdaten-Updates.</strong></p>'+
@@ -196,6 +270,14 @@ function renderSources(){
 }
 function render(){renderCards();renderDetail();renderDeltas();renderPath();renderHistory();renderSources()}
 document.querySelectorAll('[data-meeting]').forEach(b=>b.onclick=()=>{meeting=+b.dataset.meeting;setActive('meeting',meeting);render()});
+document.querySelectorAll('[data-history-offset]').forEach(b=>b.onclick=()=>{
+ const days=Number(b.dataset.historyOffset);
+ if(days===7)historyOffsetWeek=!historyOffsetWeek;
+ if(days===28)historyOffsetMonth=!historyOffsetMonth;
+ b.classList.toggle('selected',days===7?historyOffsetWeek:historyOffsetMonth);
+ b.setAttribute('aria-pressed',String(days===7?historyOffsetWeek:historyOffsetMonth));
+ renderHistory();
+});
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;setActive('mode',mode);render()});
 document.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{pathMode=b.dataset.path;setActive('path',pathMode);render()});
 window.addEventListener('resize',()=>{renderPath();renderHistory()});
