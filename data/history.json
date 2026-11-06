@@ -2104,5 +2104,815 @@
     },
     "incremental_three_way": null,
     "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2026-12-09",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 60.5,
+    "move_direction": "hike",
+    "incremental_expected_bps": 15.1,
+    "implied_rate_pct": 4.03,
+    "cumulative": {
+      "higher": 60.5,
+      "same": 39.5,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2027-01-27",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 17.1,
+    "move_direction": "hike",
+    "incremental_expected_bps": 4.3,
+    "implied_rate_pct": 4.07,
+    "cumulative": {
+      "higher": 67.2,
+      "same": 32.8,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2027-03-17",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 32.0,
+    "move_direction": "hike",
+    "incremental_expected_bps": 8.0,
+    "implied_rate_pct": 4.15,
+    "cumulative": {
+      "higher": 77.7,
+      "same": 22.3,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2027-04-28",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 18.5,
+    "move_direction": "hike",
+    "incremental_expected_bps": 4.6,
+    "implied_rate_pct": 4.2,
+    "cumulative": {
+      "higher": 81.8,
+      "same": 18.2,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2027-06-09",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 19.2,
+    "move_direction": "hike",
+    "incremental_expected_bps": 4.8,
+    "implied_rate_pct": 4.24,
+    "cumulative": {
+      "higher": 85.3,
+      "same": 14.7,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2027-07-28",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 5.8,
+    "move_direction": "hike",
+    "incremental_expected_bps": 1.4,
+    "implied_rate_pct": 4.26,
+    "cumulative": {
+      "higher": 86.2,
+      "same": 13.8,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2027-09-15",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 9.8,
+    "move_direction": "hike",
+    "incremental_expected_bps": 2.4,
+    "implied_rate_pct": 4.28,
+    "cumulative": {
+      "higher": 87.5,
+      "same": 12.5,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2027-10-27",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 1.5,
+    "move_direction": "cut",
+    "incremental_expected_bps": -0.4,
+    "implied_rate_pct": 4.28,
+    "cumulative": {
+      "higher": 87.0,
+      "same": 12.8,
+      "lower": 0.2
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "FED",
+    "meeting_date": "2027-12-08",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/federal-reserve/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 13.9,
+    "move_direction": "cut",
+    "incremental_expected_bps": -3.5,
+    "implied_rate_pct": 4.24,
+    "cumulative": {
+      "higher": 82.0,
+      "same": 16.0,
+      "lower": 2.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2026-12-17",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 75.1,
+    "move_direction": "hike",
+    "incremental_expected_bps": 18.8,
+    "implied_rate_pct": 2.69,
+    "cumulative": {
+      "higher": 75.1,
+      "same": 24.9,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2027-02-04",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 22.0,
+    "move_direction": "hike",
+    "incremental_expected_bps": 5.5,
+    "implied_rate_pct": 2.74,
+    "cumulative": {
+      "higher": 80.6,
+      "same": 19.4,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2027-03-18",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 48.7,
+    "move_direction": "hike",
+    "incremental_expected_bps": 12.2,
+    "implied_rate_pct": 2.86,
+    "cumulative": {
+      "higher": 90.0,
+      "same": 10.0,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2027-04-29",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 21.6,
+    "move_direction": "hike",
+    "incremental_expected_bps": 5.4,
+    "implied_rate_pct": 2.92,
+    "cumulative": {
+      "higher": 92.2,
+      "same": 7.8,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2027-06-10",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 19.0,
+    "move_direction": "hike",
+    "incremental_expected_bps": 4.7,
+    "implied_rate_pct": 2.97,
+    "cumulative": {
+      "higher": 93.7,
+      "same": 6.3,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2027-07-22",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 22.3,
+    "move_direction": "hike",
+    "incremental_expected_bps": 5.6,
+    "implied_rate_pct": 3.02,
+    "cumulative": {
+      "higher": 95.1,
+      "same": 4.9,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2027-09-09",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 7.5,
+    "move_direction": "hike",
+    "incremental_expected_bps": 1.9,
+    "implied_rate_pct": 3.04,
+    "cumulative": {
+      "higher": 95.5,
+      "same": 4.5,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2027-10-28",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 1.0,
+    "move_direction": "cut",
+    "incremental_expected_bps": -0.3,
+    "implied_rate_pct": 3.04,
+    "cumulative": {
+      "higher": 95.2,
+      "same": 4.7,
+      "lower": 0.1
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "ECB",
+    "meeting_date": "2027-12-16",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/european-central-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 3.3,
+    "move_direction": "cut",
+    "incremental_expected_bps": -0.8,
+    "implied_rate_pct": 3.03,
+    "cumulative": {
+      "higher": 94.4,
+      "same": 5.4,
+      "lower": 0.2
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOE",
+    "meeting_date": "2026-12-17",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-england/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 100.0,
+    "move_direction": "hike",
+    "incremental_expected_bps": 33.1,
+    "implied_rate_pct": 4.33,
+    "cumulative": {
+      "higher": 97.0,
+      "same": 3.0,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOE",
+    "meeting_date": "2027-02-04",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-england/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 82.4,
+    "move_direction": "hike",
+    "incremental_expected_bps": 20.6,
+    "implied_rate_pct": 4.54,
+    "cumulative": {
+      "higher": 99.5,
+      "same": 0.5,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOE",
+    "meeting_date": "2027-03-18",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-england/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 47.0,
+    "move_direction": "hike",
+    "incremental_expected_bps": 11.8,
+    "implied_rate_pct": 4.65,
+    "cumulative": {
+      "higher": 99.7,
+      "same": 0.3,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOE",
+    "meeting_date": "2027-04-29",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-england/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 62.1,
+    "move_direction": "hike",
+    "incremental_expected_bps": 15.5,
+    "implied_rate_pct": 4.81,
+    "cumulative": {
+      "higher": 99.9,
+      "same": 0.1,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOE",
+    "meeting_date": "2027-06-17",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-england/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 34.7,
+    "move_direction": "hike",
+    "incremental_expected_bps": 8.7,
+    "implied_rate_pct": 4.9,
+    "cumulative": {
+      "higher": 99.9,
+      "same": 0.1,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOE",
+    "meeting_date": "2027-07-29",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-england/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 33.7,
+    "move_direction": "hike",
+    "incremental_expected_bps": 8.4,
+    "implied_rate_pct": 4.98,
+    "cumulative": {
+      "higher": 100.0,
+      "same": 0.1,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOE",
+    "meeting_date": "2027-09-16",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-england/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 13.9,
+    "move_direction": "hike",
+    "incremental_expected_bps": 3.5,
+    "implied_rate_pct": 5.02,
+    "cumulative": {
+      "higher": 100.0,
+      "same": 0.0,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOE",
+    "meeting_date": "2027-11-04",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-england/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 5.3,
+    "move_direction": "hike",
+    "incremental_expected_bps": 1.3,
+    "implied_rate_pct": 5.03,
+    "cumulative": {
+      "higher": 100.0,
+      "same": 0.0,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "RBA",
+    "meeting_date": "2026-12-08",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/reserve-bank-of-australia/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 2.6,
+    "move_direction": "hike",
+    "incremental_expected_bps": 0.6,
+    "implied_rate_pct": 4.86,
+    "cumulative": {
+      "higher": 2.6,
+      "same": 97.4,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "RBA",
+    "meeting_date": "2027-02-09",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/reserve-bank-of-australia/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 28.2,
+    "move_direction": "hike",
+    "incremental_expected_bps": 7.1,
+    "implied_rate_pct": 4.93,
+    "cumulative": {
+      "higher": 30.8,
+      "same": 69.2,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "RBA",
+    "meeting_date": "2027-03-23",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/reserve-bank-of-australia/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 65.6,
+    "move_direction": "hike",
+    "incremental_expected_bps": 16.4,
+    "implied_rate_pct": 5.09,
+    "cumulative": {
+      "higher": 96.4,
+      "same": 3.6,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "RBA",
+    "meeting_date": "2027-05-04",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/reserve-bank-of-australia/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 76.5,
+    "move_direction": "cut",
+    "incremental_expected_bps": -19.1,
+    "implied_rate_pct": 4.9,
+    "cumulative": {
+      "higher": 19.9,
+      "same": 80.1,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "RBA",
+    "meeting_date": "2027-06-22",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/reserve-bank-of-australia/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 20.1,
+    "move_direction": "hike",
+    "incremental_expected_bps": 5.0,
+    "implied_rate_pct": 4.95,
+    "cumulative": {
+      "higher": 40.0,
+      "same": 60.0,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "RBA",
+    "meeting_date": "2027-08-10",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/reserve-bank-of-australia/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 71.0,
+    "move_direction": "cut",
+    "incremental_expected_bps": -17.8,
+    "implied_rate_pct": 4.77,
+    "cumulative": {
+      "higher": 0.0,
+      "same": 69.0,
+      "lower": 31.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "RBA",
+    "meeting_date": "2027-11-02",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/reserve-bank-of-australia/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 37.3,
+    "move_direction": "cut",
+    "incremental_expected_bps": -9.3,
+    "implied_rate_pct": 4.68,
+    "cumulative": {
+      "higher": 0.0,
+      "same": 31.7,
+      "lower": 68.3
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "RBNZ",
+    "meeting_date": "2027-02-17",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/reserve-bank-of-new-zealand/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 100.0,
+    "move_direction": "hike",
+    "incremental_expected_bps": 30.8,
+    "implied_rate_pct": 3.06,
+    "cumulative": {
+      "higher": 100.0,
+      "same": 0.0,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOJ",
+    "meeting_date": "2026-12-17",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-japan/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 55.2,
+    "move_direction": "hike",
+    "incremental_expected_bps": 13.8,
+    "implied_rate_pct": 1.39,
+    "cumulative": {
+      "higher": 55.2,
+      "same": 44.8,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOJ",
+    "meeting_date": "2027-01-19",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-japan/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 52.2,
+    "move_direction": "hike",
+    "incremental_expected_bps": 13.1,
+    "implied_rate_pct": 1.52,
+    "cumulative": {
+      "higher": 78.6,
+      "same": 21.4,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOJ",
+    "meeting_date": "2027-03-16",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-japan/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 47.2,
+    "move_direction": "hike",
+    "incremental_expected_bps": 11.8,
+    "implied_rate_pct": 1.64,
+    "cumulative": {
+      "higher": 88.7,
+      "same": 11.3,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOJ",
+    "meeting_date": "2027-04-28",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-japan/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 29.8,
+    "move_direction": "hike",
+    "incremental_expected_bps": 7.4,
+    "implied_rate_pct": 1.71,
+    "cumulative": {
+      "higher": 92.1,
+      "same": 7.9,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOJ",
+    "meeting_date": "2027-06-15",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-japan/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 11.0,
+    "move_direction": "hike",
+    "incremental_expected_bps": 2.8,
+    "implied_rate_pct": 1.74,
+    "cumulative": {
+      "higher": 92.9,
+      "same": 7.1,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "BOJ",
+    "meeting_date": "2027-07-29",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/bank-of-japan/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 80.3,
+    "move_direction": "hike",
+    "incremental_expected_bps": 20.1,
+    "implied_rate_pct": 1.94,
+    "cumulative": {
+      "higher": 98.6,
+      "same": 1.4,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "SNB",
+    "meeting_date": "2026-12-10",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/swiss-national-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 6.3,
+    "move_direction": "hike",
+    "incremental_expected_bps": 1.6,
+    "implied_rate_pct": 0.02,
+    "cumulative": {
+      "higher": 6.3,
+      "same": 93.7,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "SNB",
+    "meeting_date": "2027-03-18",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/swiss-national-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 44.6,
+    "move_direction": "hike",
+    "incremental_expected_bps": 11.1,
+    "implied_rate_pct": 0.13,
+    "cumulative": {
+      "higher": 48.0,
+      "same": 52.0,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "SNB",
+    "meeting_date": "2027-06-24",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/swiss-national-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 58.7,
+    "move_direction": "hike",
+    "incremental_expected_bps": 14.7,
+    "implied_rate_pct": 0.27,
+    "cumulative": {
+      "higher": 78.5,
+      "same": 21.5,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "SNB",
+    "meeting_date": "2027-09-23",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/swiss-national-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 49.2,
+    "move_direction": "hike",
+    "incremental_expected_bps": 12.3,
+    "implied_rate_pct": 0.4,
+    "cumulative": {
+      "higher": 89.1,
+      "same": 10.9,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
+  },
+  {
+    "bank": "SNB",
+    "meeting_date": "2027-12-16",
+    "source": "centralbank.watch",
+    "source_url": "https://centralbank.watch/swiss-national-bank/",
+    "retrieved_at": "2026-11-06T07:20:51Z",
+    "move_probability_pct": 32.0,
+    "move_direction": "hike",
+    "incremental_expected_bps": 8.0,
+    "implied_rate_pct": 0.48,
+    "cumulative": {
+      "higher": 92.6,
+      "same": 7.4,
+      "lower": 0.0
+    },
+    "incremental_three_way": null,
+    "method_note": "Move probability ist keine isolierte Hike/Hold/Cut-Verteilung."
   }
 ]
