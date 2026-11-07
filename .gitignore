@@ -1,0 +1,11 @@
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Local dashboard background service diagnostics
+dashboard-sync.log
+
+# User-provided private futures quotations are never committed
+data/futures_quotes.json
