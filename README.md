@@ -91,3 +91,19 @@ Zusätzlicher und technisch unabhängiger Datenabruf über `models/official_refe
 - Nur tatsächlich geänderte Wahrscheinlichkeiten gelangen in die Historie. Eine neue erfolgreiche BoC-Abfrage aktualisiert trotzdem den Abrufzeitstempel in der Latest-Datei, damit unveränderte Quoten nicht fälschlich veraltet erscheinen.
 - Die BoC-Historie wurde zusätzlich mit vier **tatsächlich bereits vorhandenen GitHub-Commits** vom 04./05.11.2026 befüllt; keine simulierten Werte. Die RBA-Historie beginnt mit dem ersten gespeicherten Herausgeber-Datensatz am 05.11.2026.
 - Bei fehlendem oder veraltetem externem Feed werden BOC/RBA-Kacheln **nicht** durch ungleichartige Central Bank Watch-Zahlen ersetzt; die Kachel meldet fehlende aktuelle Daten.
+
+## Windows: Dashboard ohne PowerShell-Fenster (v0.7)
+
+Das Dashboard bleibt ein lokal an `127.0.0.1:8766` gebundener Webserver. **PowerShell muss nicht geöffnet bleiben.** Die im Projekt enthaltene `Dashboard starten.vbs` startet `local_server.py` unsichtbar und öffnet die lokale Dashboard-Adresse im Browser. Der Python-Hintergrundserver muss während der Nutzung laufen; beim Windows-Neustart wird er beendet, es sei denn, der optionale Autostart ist aktiviert.
+
+**Einmalige Umstellung eines bereits laufenden Dashboards:**
+1. Im bisherigen PowerShell-Webserver `Strg+C` drücken.
+2. Im Projektordner `C:\Trading\central-bank-probabilities` einmal `git pull` ausführen, danach PowerShell schließen.
+3. `Dashboard starten.vbs` doppelklicken. Kein PowerShell-Fenster wird angezeigt.
+4. Optional: `Dashboard Autostart einrichten.vbs` doppelklicken. Legt eine Verknüpfung im Windows-Benutzerautostart an; beim Login wird der Webserver unsichtbar gestartet und die Webseite ist danach im Browser unter http://127.0.0.1:8766/dashboard/index.html verfügbar. `Dashboard Autostart entfernen.vbs` deaktiviert das wieder. **Projektordner nach Einrichtung nicht verschieben**, sonst zeigt die Autostart-Verknüpfung ins Leere.
+
+Der Server aktualisiert den lokalen GitHub-Checkout beim Start und danach alle **15 Minuten** über `git pull --ff-only`; er überschreibt keine lokalen Änderungen und benötigt die Git-Credentials, die beim erstmaligen Klonen verwendet wurden. Bei fehlender Internetverbindung bleiben lokal vorhandene Daten sichtbar. Bei einem Git-Fehler werden Meldungen in `dashboard-sync.log` gespeichert; der JSON-Endpunkt `http://127.0.0.1:8766/api/local-sync` zeigt den Synchronisationsstatus. Der Server gibt keinen Port im öffentlichen Netzwerk frei.
+
+Ein offenes Browserfenster wird **nicht** automatisch alle 15 Minuten neu geladen. Bei Bedarf die Webseite mit `F5` aktualisieren. Wenn die Seite bereits offen ist, kann sie während der 15-minütigen Git-Synchronisation unverändert angezeigt bleiben.
+
+Voraussetzungen: Python und Git sind auf dem Windows-PC installiert; `py` muss in der Eingabeaufforderung funktionieren. Die früheren Befehle `py -m http.server` und `python -m http.server` sollten ab dieser Umstellung **nicht parallel** benutzt werden, da Port 8766 sonst belegt ist.
