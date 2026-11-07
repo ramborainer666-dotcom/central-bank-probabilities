@@ -12,7 +12,7 @@ url = "http://127.0.0.1:8766/dashboard/index.html"
 quiet = (WScript.Arguments.Count > 0)
 If quiet Then quiet = (LCase(WScript.Arguments(0)) = "--quiet")
 
-If Not fso.FileExists(fso.BuildPath(root, "dashboard\index.html")) Then
+If Not fso.FileExists(fso.BuildPath(root, "dashboard\index.html")) Or Not fso.FileExists(fso.BuildPath(root, "local_server.py")) Then
   If Not quiet Then MsgBox "dashboard\index.html fehlt. Bitte das komplette GitHub-Projekt verwenden.", vbExclamation, "Central Bank Dashboard"
   WScript.Quit 1
 End If
@@ -25,7 +25,7 @@ End If
 
 If check <> 1 Then
   ' Run without a visible console. Use the installed Windows Python launcher.
-  command = "cmd.exe /d /c py -m http.server 8766 --bind 127.0.0.1 --directory " & Quote(root)
+  command = "cmd.exe /d /c py " & Quote(fso.BuildPath(root, "local_server.py"))
   On Error Resume Next
   sh.Run command, 0, False
   If Err.Number <> 0 Then
@@ -44,7 +44,7 @@ End If
 
 Select Case check
   Case 1
-    If Not quiet Then sh.Run Quote(url), 1, False
+    If Not quiet Then sh.Run "explorer.exe " & Quote(url), 1, False
   Case 2
     If Not quiet Then MsgBox "Port 8766 liefert eine andere Webseite. Bitte den anderen Server beenden.", vbExclamation, "Central Bank Dashboard"
   Case Else
