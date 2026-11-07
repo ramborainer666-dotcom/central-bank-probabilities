@@ -19,6 +19,8 @@ jobs:
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -32,5 +34,13 @@ jobs:
           git add data/boc_prediction_market_latest.json data/boc_prediction_market_history.json
           if ! git diff --cached --quiet; then
             git commit -m "data: update BoC prediction-market odds"
-            git push
+            for attempt in 1 2 3; do
+              if git pull --rebase origin main && git push origin HEAD:main; then
+                exit 0
+              fi
+              if [ "$attempt" -lt 3 ]; then
+                sleep "$((attempt * 5))"
+              fi
+            done
+            exit 1
           fi
