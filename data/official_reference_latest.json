@@ -1,12 +1,12 @@
 {
-  "retrieved_at": "2026-11-09T22:41:20Z",
+  "retrieved_at": "2026-11-10T19:59:36Z",
   "records": [
     {
       "bank": "BOC",
       "rate_type": "overnight_benchmark",
       "rate_name": "CORRA",
       "rate_pct": 2.52,
-      "as_of_date": "2026-11-06",
+      "as_of_date": "2026-11-09",
       "source": "https://www.bankofcanada.ca/valet/observations/AVG.INTWO/json?recent=10"
     },
     {
