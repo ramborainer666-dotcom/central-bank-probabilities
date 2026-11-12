@@ -1,5 +1,5 @@
 {
-  "retrieved_at": "2026-11-12T01:36:56.999897+00:00",
+  "retrieved_at": "2026-11-12T15:29:10.746319+00:00",
   "records": [
     {
       "bank": "BOC",
@@ -8,13 +8,13 @@
       "source": "Polymarket public Gamma API",
       "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-december-20260908230600011",
       "event_slug": "bank-of-canada-decision-in-december-20260908230600011",
-      "event_volume_usd": 227594.932013,
+      "event_volume_usd": 228096.25545300002,
       "probabilities_pct": {
-        "hike": 37.55,
-        "hold": 62.5,
+        "hike": 33.55,
+        "hold": 65.0,
         "cut": 0.15
       },
-      "raw_sum_pct": 100.2,
+      "raw_sum_pct": 98.7,
       "markets": [
         {
           "market_id": "4393415",
@@ -24,12 +24,12 @@
         {
           "market_id": "4393418",
           "question": "Will the Bank of Canada increase the target for the overnight rate by 25 bps at the December interest rate announcement?",
-          "yes_price": 0.375
+          "yes_price": 0.335
         },
         {
           "market_id": "4393420",
           "question": "Will the Bank of Canada make no change to the target for the overnight rate at the December interest rate announcement?",
-          "yes_price": 0.625
+          "yes_price": 0.65
         },
         {
           "market_id": "4393422",
@@ -94,23 +94,23 @@
       "source": "Polymarket public Gamma API",
       "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-march-2027",
       "event_slug": "bank-of-canada-decision-in-march-2027",
-      "event_volume_usd": 12805.061848,
+      "event_volume_usd": 12845.061848,
       "probabilities_pct": {
         "hike": 29.7,
         "hold": 70.0,
-        "cut": 5.35
+        "cut": 5.05
       },
-      "raw_sum_pct": 105.05,
+      "raw_sum_pct": 104.75,
       "markets": [
         {
           "market_id": "6404257",
           "question": "Will the Bank of Canada decrease the target for the overnight rate by 50+ bps at the March interest rate announcement?",
-          "yes_price": 0.026
+          "yes_price": 0.0225
         },
         {
           "market_id": "6404258",
           "question": "Will the Bank of Canada decrease the target for the overnight rate by 25 bps at the March interest rate announcement?",
-          "yes_price": 0.0275
+          "yes_price": 0.028
         },
         {
           "market_id": "6404259",
