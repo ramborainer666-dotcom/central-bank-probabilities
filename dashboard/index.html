@@ -116,7 +116,7 @@ function externalReady(b){
 }
 function rowsFor(b){
  if(b==='BOC')return externalReady(b)?grp(externalBOC.records,b):[];
- if(b==='RBA')return externalReady(b)?grp(externalRBA.records,b):[];
+ if(b==='RBA')return externalRBA?.records?.length?grp(externalRBA.records,b):[];
  return grp(latest.records||[],b);
 }
 function sourceFor(b){
@@ -147,12 +147,14 @@ function renderCards(){
  box.innerHTML=BANKS.map(b=>{
   const r=rowsFor(b)[meeting],p=odds(r,b);
   const stale=(latest.stale_banks||[]).includes(b);
+  const rbaStale=(b==='RBA'&&!externalReady('RBA'));
+  const rbaAsOf=externalRBA?.source_asof_utc||'unbekannt';
   const rawTotal=p?p.hike+p.hold+p.cut:0;
   const values=p?[p.hike,p.hold,p.cut]:[0,0,0];
   const source=sourceFor(b);
   const detail=b==='BOC'
    ?'Prognosemarkt · kein CORRA-Zinspfad'
-   :b==='RBA'?'Erwartung: '+bp(r?.expected_move_bps)+' · futuresbasiertes Modell'
+   :b==='RBA'?'Erwartung: '+bp(r?.expected_move_bps)+' · futuresbasiertes Modell'+(rbaStale?' · ⚠ VERALTET (Stand '+rbaAsOf.slice(0,10)+')':'')
    :'Δ Zinspfad: '+bp(r?.incremental_expected_bps)+(stale?' · ⚠ VERALTETER STAND':'');
   return '<button class="bank '+(bank===b?'active':'')+'" style="--bank:'+COLORS[b]+'" data-bank="'+b+'"><header><span class="dot"></span><strong>'+b+'</strong><small>'+date(r?.meeting_date)+'</small></header>'+
    (r&&p?'<div class="bar">'+values.map((v,i)=>'<i style="width:'+(rawTotal?100*v/rawTotal:0)+'%;background:'+['var(--hike)','var(--hold)','var(--cut)'][i]+'"></i>').join('')+'</div><div class="stats"><span>Hike '+pct(p.hike)+'</span><span>Hold '+pct(p.hold)+'</span><span>Cut '+pct(p.cut)+'</span></div><div class="small">'+esc(source)+' · '+detail+'</div>':
@@ -162,9 +164,10 @@ function renderCards(){
 }
 function renderDetail(){
  const r=selected(),p=odds(r,bank);
+ const rbaStale=(bank==='RBA'&&!externalReady('RBA'));
  $('#detailtitle').textContent=bank+' · '+(meeting+1)+'. Meeting '+date(r?.meeting_date);
  if(!r||!p){$('#detail').innerHTML='<div class="empty">Keine aktuellen Daten für dieses Meeting</div>';return}
- let out='<p><strong>Quelle:</strong> '+esc(sourceFor(bank))+'</p>';
+ let out=(rbaStale?'<p class="warn"><strong>⚠ Historische RBA-Daten, nicht aktuell!</strong> Stand: '+esc(externalRBA?.source_asof_utc||'unbekannt')+'. Der Herausgeber hat seitdem kein neues Modell veröffentlicht.</p>':'')+'<p><strong>Quelle:</strong> '+esc(sourceFor(bank))+'</p>';
  if(bank==='BOC'||bank==='RBA'){
   out+=[['Hike',p.hike,'var(--hike)'],['Hold',p.hold,'var(--hold)'],['Cut',p.cut,'var(--cut)']]
     .map(([k,v,color])=>'<div style="margin:14px 0"><div class="row"><strong>'+k+'</strong><span>'+pct(v)+'</span></div><div class="bar"><i style="background:'+color+';width:'+Math.max(0,Math.min(100,v))+'%"></i></div></div>').join('');
@@ -213,7 +216,7 @@ function renderPath(){
  const lines=[];
  const baseDate=Date.parse(new Date().toISOString().slice(0,10)+'T00:00:00Z');
  for(const b of BANKS){
-  if(b==='BOC')continue; // prediction market supplies no rate curve
+  if(b==='BOC'||(b==='RBA'&&!externalReady('RBA')))continue; // no BoC curve; stale RBA excluded from current comparison
   const rows=rowsFor(b).slice(0,pathMode==='two'?2:9);
   if(!rows.length)continue;
   const base=rows[0].implied_rate_pct-(b==='RBA'?rows[0].expected_move_bps:rows[0].incremental_expected_bps)/100;
@@ -315,8 +318,10 @@ async function loadRbaOpenData(){
  const doc=await response.json(),rows=doc.records||[];
  if(!rows.length){$('#rbaOpenData').innerHTML='<p>Noch kein aktueller, vollständig validierter Datensatz verfügbar.</p>';return}
  const age=(Date.now()-Date.parse(doc.source_asof_utc))/3600000;
- if(!Number.isFinite(age)||age>72||age<-.2){$('#rbaOpenData').innerHTML='<p class="warn">Quelle veraltet oder Datum unplausibel; Wahrscheinlichkeiten werden nicht als aktuell angezeigt.</p>';return}
- $('#rbaOpenData').innerHTML='<p>Quelle zuletzt aktualisiert: '+esc(doc.source_asof_utc)+'</p><table><tr><th>Meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Erwartung</th></tr>'+rows.slice(0,9).map(r=>'<tr><td>'+date(r.meeting_date)+'</td><td>'+pct(r.probabilities_pct.cut)+'</td><td>'+pct(r.probabilities_pct.hold)+'</td><td>'+pct(r.probabilities_pct.hike)+'</td><td>'+bp(r.expected_move_bps)+'</td></tr>').join('')+'</table>';
+ if(!Number.isFinite(age)||age<-.2){$('#rbaOpenData').innerHTML='<p class="warn">Quellenzeitstempel ist ungültig. Keine Werte angezeigt.</p>';return}
+ const stale=age>72;
+ const warning=stale?'<p class="warn"><strong>⚠ VERALTET:</strong> Letzter bestätigter RBA-Modellstand vom '+esc(doc.source_asof_utc)+'. Nicht als aktuelle Marktwahrscheinlichkeit verwenden.</p>':'';
+ $('#rbaOpenData').innerHTML=warning+'<p>Quelle zuletzt aktualisiert: '+esc(doc.source_asof_utc)+'</p><table><tr><th>Meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Erwartung</th></tr>'+rows.slice(0,9).map(r=>'<tr><td>'+date(r.meeting_date)+'</td><td>'+pct(r.probabilities_pct.cut)+'</td><td>'+pct(r.probabilities_pct.hold)+'</td><td>'+pct(r.probabilities_pct.hike)+'</td><td>'+bp(r.expected_move_bps)+'</td></tr>').join('')+'</table>';
  }catch(e){$('#rbaOpenData').textContent='Kein verifizierter RBA-Modellsnapshot.'}
 }
 loadRbaOpenData();
