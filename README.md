@@ -4,7 +4,7 @@ Browser-Dashboard für FED, ECB, BOE, BOC, RBA, RBNZ, BOJ und SNB.
 
 ## Stand
 
-Prototyp: GitHub Actions testet zunächst **nur manuell**. Ein regelmäßiger Abruf wird erst nach erfolgreicher Live-Verifikation der Datenquelle und Prüfung der Nutzungsbedingungen aktiviert. Die öffentlich sichtbaren Tabellen von centralbank.watch sind keine dokumentierte API.
+Der Collector ruft die öffentlich sichtbaren Meeting-Tabellen von centralbank.watch bereits automatisch über GitHub Actions ab. Dafür gibt es keine dokumentierte öffentliche API; Verfügbarkeit und Datenstand der Quelle sind daher nicht garantiert.
 
 Das Dashboard trennt:
 - kumulierte Wahrscheinlichkeit `higher/same/lower` gegenüber dem aktuellen Zinssatz;
@@ -29,7 +29,7 @@ Dann http://localhost:8766/dashboard/ öffnen. Um lokal Daten abzurufen: `.\.ven
 
 ## Status der automatischen Abfrage
 
-Workflow `.github/workflows/collect.yml`: Nur `workflow_dispatch`. Keine automatische Ausführung, bis der echte Abruf belastbar nachgewiesen ist. Das Projekt nutzt keine kostenpflichtigen Datenquellen.
+Workflow `.github/workflows/collect.yml`: Drei geplante Abrufe pro Werktag (06:17, 12:17 und 19:17 UTC) und zusätzlich manuell startbar. GitHub darf geplante Starts verzögern. Jeder erfolgreiche Abruf aktualisiert `data/latest.json` einschließlich des Prüfzeitpunkts; `data/history.json` erhält nur inhaltlich veränderte Beobachtungen. Das Projekt nutzt keine kostenpflichtigen Datenquellen.
 
 ## Datenqualität
 
