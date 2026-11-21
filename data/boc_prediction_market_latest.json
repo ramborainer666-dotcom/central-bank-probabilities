@@ -1,5 +1,5 @@
 {
-  "retrieved_at": "2026-11-20T15:39:56.411142+00:00",
+  "retrieved_at": "2026-11-21T00:53:44.754224+00:00",
   "records": [
     {
       "bank": "BOC",
@@ -8,28 +8,28 @@
       "source": "Polymarket public Gamma API",
       "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-december-20260908230600011",
       "event_slug": "bank-of-canada-decision-in-december-20260908230600011",
-      "event_volume_usd": 277280.650126,
+      "event_volume_usd": 302447.702056,
       "probabilities_pct": {
-        "hike": 59.15,
-        "hold": 41.5,
-        "cut": 0.2
+        "hike": 50.25,
+        "hold": 48.5,
+        "cut": 0.25
       },
-      "raw_sum_pct": 100.85,
+      "raw_sum_pct": 99.0,
       "markets": [
         {
           "market_id": "4393415",
           "question": "Will the Bank of Canada increase the target for the overnight rate by 50+ bps at the December interest rate announcement?",
-          "yes_price": 0.0015
+          "yes_price": 0.0025
         },
         {
           "market_id": "4393418",
           "question": "Will the Bank of Canada increase the target for the overnight rate by 25 bps at the December interest rate announcement?",
-          "yes_price": 0.59
+          "yes_price": 0.5
         },
         {
           "market_id": "4393420",
           "question": "Will the Bank of Canada make no change to the target for the overnight rate at the December interest rate announcement?",
-          "yes_price": 0.415
+          "yes_price": 0.485
         },
         {
           "market_id": "4393422",
@@ -39,7 +39,7 @@
         {
           "market_id": "4393425",
           "question": "Will the Bank of Canada decrease the target for the overnight rate by 50+ bps at the December interest rate announcement?",
-          "yes_price": 0.0005
+          "yes_price": 0.001
         }
       ],
       "method_note": "YES share prices are prediction-market prices, not CORRA/OIS-implied probabilities. May include spreads and illiquidity."
@@ -51,23 +51,23 @@
       "source": "Polymarket public Gamma API",
       "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-january-2027",
       "event_slug": "bank-of-canada-decision-in-january-2027",
-      "event_volume_usd": 14525.761661000002,
+      "event_volume_usd": 14525.761661,
       "probabilities_pct": {
-        "hike": 45.3,
+        "hike": 44.75,
         "hold": 55.0,
-        "cut": 6.7
+        "cut": 5.65
       },
-      "raw_sum_pct": 107.0,
+      "raw_sum_pct": 105.4,
       "markets": [
         {
           "market_id": "6404206",
           "question": "Will the Bank of Canada decrease the target for the overnight rate by 50+ bps at the January interest rate announcement?",
-          "yes_price": 0.033
+          "yes_price": 0.028
         },
         {
           "market_id": "6404207",
           "question": "Will the Bank of Canada decrease the target for the overnight rate by 25 bps at the January interest rate announcement?",
-          "yes_price": 0.034
+          "yes_price": 0.0285
         },
         {
           "market_id": "6404208",
@@ -82,55 +82,14 @@
         {
           "market_id": "6404210",
           "question": "Will the Bank of Canada increase the target for the overnight rate by 50+ bps at the January interest rate announcement?",
-          "yes_price": 0.033
-        }
-      ],
-      "method_note": "YES share prices are prediction-market prices, not CORRA/OIS-implied probabilities. May include spreads and illiquidity."
-    },
-    {
-      "bank": "BOC",
-      "meeting_date": "2027-03-03",
-      "source_type": "prediction_market",
-      "source": "Polymarket public Gamma API",
-      "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-march-2027",
-      "event_slug": "bank-of-canada-decision-in-march-2027",
-      "event_volume_usd": 13569.022579000002,
-      "probabilities_pct": {
-        "hike": 31.5,
-        "hold": 67.0,
-        "cut": 9.4
-      },
-      "raw_sum_pct": 107.9,
-      "markets": [
-        {
-          "market_id": "6404257",
-          "question": "Will the Bank of Canada decrease the target for the overnight rate by 50+ bps at the March interest rate announcement?",
-          "yes_price": 0.043
-        },
-        {
-          "market_id": "6404258",
-          "question": "Will the Bank of Canada decrease the target for the overnight rate by 25 bps at the March interest rate announcement?",
-          "yes_price": 0.051
-        },
-        {
-          "market_id": "6404259",
-          "question": "Will the Bank of Canada make no change to the target for the overnight rate at the March interest rate announcement?",
-          "yes_price": 0.67
-        },
-        {
-          "market_id": "6404260",
-          "question": "Will the Bank of Canada increase the target for the overnight rate by 25 bps at the March interest rate announcement?",
-          "yes_price": 0.27
-        },
-        {
-          "market_id": "6404261",
-          "question": "Will the Bank of Canada increase the target for the overnight rate by 50+ bps at the March interest rate announcement?",
-          "yes_price": 0.045
+          "yes_price": 0.0275
         }
       ],
       "method_note": "YES share prices are prediction-market prices, not CORRA/OIS-implied probabilities. May include spreads and illiquidity."
     }
   ],
-  "errors": {},
-  "status": "ok"
+  "errors": {
+    "2027-03-03": "Market quotes do not form coherent distribution, sum=1.082"
+  },
+  "status": "partial"
 }
