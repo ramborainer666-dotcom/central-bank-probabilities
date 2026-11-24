@@ -1,5 +1,5 @@
 {
-  "retrieved_at": "2026-11-23T18:34:31.943205+00:00",
+  "retrieved_at": "2026-11-24T04:21:40.256348+00:00",
   "records": [
     {
       "bank": "BOC",
@@ -8,28 +8,28 @@
       "source": "Polymarket public Gamma API",
       "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-december-20260908230600011",
       "event_slug": "bank-of-canada-decision-in-december-20260908230600011",
-      "event_volume_usd": 339127.543258,
+      "event_volume_usd": 346252.260435,
       "probabilities_pct": {
-        "hike": 53.45,
-        "hold": 44.0,
+        "hike": 49.65,
+        "hold": 49.0,
         "cut": 0.3
       },
-      "raw_sum_pct": 97.75,
+      "raw_sum_pct": 98.95,
       "markets": [
         {
           "market_id": "4393415",
           "question": "Will the Bank of Canada increase the target for the overnight rate by 50+ bps at the December interest rate announcement?",
-          "yes_price": 0.0045
+          "yes_price": 0.0015
         },
         {
           "market_id": "4393418",
           "question": "Will the Bank of Canada increase the target for the overnight rate by 25 bps at the December interest rate announcement?",
-          "yes_price": 0.53
+          "yes_price": 0.495
         },
         {
           "market_id": "4393420",
           "question": "Will the Bank of Canada make no change to the target for the overnight rate at the December interest rate announcement?",
-          "yes_price": 0.44
+          "yes_price": 0.49
         },
         {
           "market_id": "4393422",
@@ -51,18 +51,18 @@
       "source": "Polymarket public Gamma API",
       "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-january-2027",
       "event_slug": "bank-of-canada-decision-in-january-2027",
-      "event_volume_usd": 19410.046818000003,
+      "event_volume_usd": 19410.046818,
       "probabilities_pct": {
-        "hike": 47.5,
-        "hold": 42.5,
-        "cut": 6.5
+        "hike": 49.7,
+        "hold": 43.5,
+        "cut": 8.6
       },
-      "raw_sum_pct": 96.5,
+      "raw_sum_pct": 101.8,
       "markets": [
         {
           "market_id": "6404206",
           "question": "Will the Bank of Canada decrease the target for the overnight rate by 50+ bps at the January interest rate announcement?",
-          "yes_price": 0.0155
+          "yes_price": 0.0365
         },
         {
           "market_id": "6404207",
@@ -72,17 +72,17 @@
         {
           "market_id": "6404208",
           "question": "Will the Bank of Canada make no change to the target for the overnight rate at the January interest rate announcement?",
-          "yes_price": 0.425
+          "yes_price": 0.435
         },
         {
           "market_id": "6404209",
           "question": "Will the Bank of Canada increase the target for the overnight rate by 25 bps at the January interest rate announcement?",
-          "yes_price": 0.445
+          "yes_price": 0.46
         },
         {
           "market_id": "6404210",
           "question": "Will the Bank of Canada increase the target for the overnight rate by 50+ bps at the January interest rate announcement?",
-          "yes_price": 0.03
+          "yes_price": 0.037
         }
       ],
       "method_note": "YES share prices are prediction-market prices, not CORRA/OIS-implied probabilities. May include spreads and illiquidity."
@@ -98,19 +98,19 @@
       "probabilities_pct": {
         "hike": 30.75,
         "hold": 68.5,
-        "cut": 6.85
+        "cut": 6.0
       },
-      "raw_sum_pct": 106.1,
+      "raw_sum_pct": 105.25,
       "markets": [
         {
           "market_id": "6404257",
           "question": "Will the Bank of Canada decrease the target for the overnight rate by 50+ bps at the March interest rate announcement?",
-          "yes_price": 0.031
+          "yes_price": 0.03
         },
         {
           "market_id": "6404258",
           "question": "Will the Bank of Canada decrease the target for the overnight rate by 25 bps at the March interest rate announcement?",
-          "yes_price": 0.0375
+          "yes_price": 0.03
         },
         {
           "market_id": "6404259",
