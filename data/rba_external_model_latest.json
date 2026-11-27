@@ -1,6 +1,6 @@
 {
-  "retrieved_at": "2026-11-26T17:21:23.390657+00:00",
-  "source_asof_utc": "2026-11-26T05:05:41+00:00",
+  "retrieved_at": "2026-11-27T16:59:42.631736+00:00",
+  "source_asof_utc": "2026-11-27T05:03:53+00:00",
   "source": "https://rbaratewatch.com/data/latest.json",
   "attribution": "RBA Rate Watch · CC BY 4.0",
   "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -10,181 +10,181 @@
     {
       "bank": "RBA",
       "meeting_date": "2026-12-08",
-      "implied_rate_pct": 4.846,
-      "expected_move_bps": -0.4,
+      "implied_rate_pct": 4.8473,
+      "expected_move_bps": -0.3,
       "probabilities_pct": {
-        "cut": 10.8,
-        "hold": 80.11,
-        "hike": 9.09
+        "cut": 10.41,
+        "hold": 80.38,
+        "hike": 9.21
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 10.8,
-        "hold": 80.11,
-        "hike_25": 8.97,
-        "hike_50": 0.12
+        "cut_25": 10.41,
+        "hold": 80.38,
+        "hike_25": 9.1,
+        "hike_50": 0.11
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     },
     {
       "bank": "RBA",
       "meeting_date": "2027-02-09",
-      "implied_rate_pct": 4.8393,
-      "expected_move_bps": -0.7,
+      "implied_rate_pct": 4.8425,
+      "expected_move_bps": -0.5,
       "probabilities_pct": {
-        "cut": 13.05,
-        "hold": 76.8,
-        "hike": 10.15
+        "cut": 12.55,
+        "hold": 77.04,
+        "hike": 10.41
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 13.05,
-        "hold": 76.8,
-        "hike_25": 9.94,
-        "hike_50": 0.21
+        "cut_25": 12.55,
+        "hold": 77.04,
+        "hike_25": 10.19,
+        "hike_50": 0.22
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     },
     {
       "bank": "RBA",
       "meeting_date": "2027-03-23",
       "implied_rate_pct": 4.8073,
-      "expected_move_bps": -3.2,
+      "expected_move_bps": -3.5,
       "probabilities_pct": {
-        "cut": 20.27,
-        "hold": 72.41,
-        "hike": 7.32
+        "cut": 21.26,
+        "hold": 71.71,
+        "hike": 7.03
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 20.27,
-        "hold": 72.41,
-        "hike_25": 7.17,
-        "hike_50": 0.15
+        "cut_25": 21.26,
+        "hold": 71.71,
+        "hike_25": 6.89,
+        "hike_50": 0.14
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     },
     {
       "bank": "RBA",
       "meeting_date": "2027-05-04",
-      "implied_rate_pct": 4.7352,
+      "implied_rate_pct": 4.7353,
       "expected_move_bps": -7.2,
       "probabilities_pct": {
-        "cut": 33.86,
-        "hold": 61.24,
-        "hike": 4.9
+        "cut": 33.83,
+        "hold": 61.26,
+        "hike": 4.91
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 33.86,
-        "hold": 61.24,
-        "hike_25": 4.78,
+        "cut_25": 33.83,
+        "hold": 61.26,
+        "hike_25": 4.79,
         "hike_50": 0.12
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     },
     {
       "bank": "RBA",
       "meeting_date": "2027-06-22",
-      "implied_rate_pct": 4.6428,
-      "expected_move_bps": -9.2,
+      "implied_rate_pct": 4.6425,
+      "expected_move_bps": -9.3,
       "probabilities_pct": {
-        "cut": 41.73,
-        "hold": 53.67,
+        "cut": 41.89,
+        "hold": 53.51,
         "hike": 4.6
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 41.73,
-        "hold": 53.67,
+        "cut_25": 41.89,
+        "hold": 53.51,
         "hike_25": 4.42,
         "hike_50": 0.18
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     },
     {
       "bank": "RBA",
       "meeting_date": "2027-08-10",
-      "implied_rate_pct": 4.5599,
-      "expected_move_bps": -8.3,
+      "implied_rate_pct": 4.5693,
+      "expected_move_bps": -7.3,
       "probabilities_pct": {
-        "cut": 37.97,
-        "hold": 57.36,
-        "hike": 4.67
+        "cut": 34.27,
+        "hold": 60.86,
+        "hike": 4.87
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 37.97,
-        "hold": 57.36,
-        "hike_25": 4.53,
-        "hike_50": 0.14
+        "cut_25": 34.27,
+        "hold": 60.86,
+        "hike_25": 4.75,
+        "hike_50": 0.12
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     },
     {
       "bank": "RBA",
       "meeting_date": "2027-09-21",
-      "implied_rate_pct": 4.4872,
-      "expected_move_bps": -7.3,
+      "implied_rate_pct": 4.4776,
+      "expected_move_bps": -9.2,
       "probabilities_pct": {
-        "cut": 34.09,
-        "hold": 61.02,
-        "hike": 4.89
+        "cut": 41.45,
+        "hold": 53.95,
+        "hike": 4.6
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 34.09,
-        "hold": 61.02,
-        "hike_25": 4.77,
-        "hike_50": 0.12
+        "cut_25": 41.45,
+        "hold": 53.95,
+        "hike_25": 4.43,
+        "hike_50": 0.17
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     },
     {
       "bank": "RBA",
       "meeting_date": "2027-11-02",
-      "implied_rate_pct": 4.3938,
-      "expected_move_bps": -9.3,
+      "implied_rate_pct": 4.3837,
+      "expected_move_bps": -9.4,
       "probabilities_pct": {
-        "cut": 42.13,
-        "hold": 53.27,
-        "hike": 4.6
+        "cut": 42.33,
+        "hold": 53.08,
+        "hike": 4.59
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 42.13,
-        "hold": 53.27,
-        "hike_25": 4.42,
+        "cut_25": 42.33,
+        "hold": 53.08,
+        "hike_25": 4.41,
         "hike_50": 0.18
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     },
     {
       "bank": "RBA",
       "meeting_date": "2027-12-14",
-      "implied_rate_pct": 4.3413,
-      "expected_move_bps": -5.3,
+      "implied_rate_pct": 4.3404,
+      "expected_move_bps": -4.3,
       "probabilities_pct": {
-        "cut": 26.89,
-        "hold": 67.34,
-        "hike": 5.77
+        "cut": 23.84,
+        "hold": 69.77,
+        "hike": 6.39
       },
       "five_outcome_probabilities_pct": {
         "cut_50": 0.0,
-        "cut_25": 26.89,
-        "hold": 67.34,
-        "hike_25": 5.65,
-        "hike_50": 0.12
+        "cut_25": 23.84,
+        "hold": 69.77,
+        "hike_25": 6.26,
+        "hike_50": 0.13
       },
-      "source_asof_utc": "2026-11-26T05:05:41+00:00",
+      "source_asof_utc": "2026-11-27T05:03:53+00:00",
       "method": "RBA Rate Watch model v1.0"
     }
   ],
