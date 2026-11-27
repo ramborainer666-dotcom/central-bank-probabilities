@@ -1286,5 +1286,47 @@
     },
     "raw_sum_pct": 104.55,
     "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-march-2027"
+  },
+  {
+    "bank": "BOC",
+    "meeting_date": "2026-12-09",
+    "source_type": "prediction_market",
+    "source": "Polymarket public Gamma API",
+    "retrieved_at": "2026-11-27T02:20:08.253947+00:00",
+    "probabilities_pct": {
+      "hike": 78.95,
+      "hold": 18.5,
+      "cut": 0.1
+    },
+    "raw_sum_pct": 97.55,
+    "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-december-20260908230600011"
+  },
+  {
+    "bank": "BOC",
+    "meeting_date": "2027-01-27",
+    "source_type": "prediction_market",
+    "source": "Polymarket public Gamma API",
+    "retrieved_at": "2026-11-27T02:20:08.253947+00:00",
+    "probabilities_pct": {
+      "hike": 42.15,
+      "hold": 48.5,
+      "cut": 9.2
+    },
+    "raw_sum_pct": 99.85,
+    "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-january-2027"
+  },
+  {
+    "bank": "BOC",
+    "meeting_date": "2027-03-03",
+    "source_type": "prediction_market",
+    "source": "Polymarket public Gamma API",
+    "retrieved_at": "2026-11-27T02:20:08.253947+00:00",
+    "probabilities_pct": {
+      "hike": 21.9,
+      "hold": 71.5,
+      "cut": 6.0
+    },
+    "raw_sum_pct": 99.4,
+    "source_url": "https://polymarket.com/event/bank-of-canada-decision-in-march-2027"
   }
 ]
